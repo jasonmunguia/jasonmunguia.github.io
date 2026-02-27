@@ -1,0 +1,622 @@
+/* ==========================================================================
+   CSS Variables & Design Tokens
+   ========================================================================== */
+:root {
+    --clr-bg: #09090b;
+    /* Very dark zinc */
+    --clr-text: #F8F9FA;
+    --clr-text-muted: #a1a1aa;
+    --clr-border: #27272a;
+
+    /* Mesh Gradient Colors from User Image */
+    --mesh-orange: #ff9a44;
+    --mesh-cyan: #00f2fe;
+    --mesh-light-purple: #e09aff;
+    --mesh-darkblue: #4a00e0;
+
+    --font-heading: 'Syncopate', sans-serif;
+    --font-body: 'Inter', sans-serif;
+
+    --spacing-sm: 1rem;
+    --spacing-md: 2rem;
+    --spacing-lg: 4rem;
+
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body {
+    width: 100vw;
+    height: 100vh;
+    /* Locked to viewport height */
+    overflow: hidden;
+    /* Removes the "excess length" and prevents scrolling */
+}
+
+body {
+    background-color: var(--clr-bg);
+    color: var(--clr-text);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ==========================================================================
+   Background Glow
+   ========================================================================== */
+.glow-top {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 80vw;
+    height: 80vw;
+    max-width: 800px;
+    max-height: 800px;
+    border-radius: 50%;
+    background: radial-gradient(circle at center, rgba(30, 58, 138, 0.6) 0%, transparent 70%);
+    filter: blur(60px);
+    z-index: -1;
+    pointer-events: none;
+
+    /* Animation: start bottom small, expand up, then breathe */
+    animation:
+        riseAndExpand 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards,
+        breathe 4s ease-in-out 1.5s infinite alternate;
+}
+
+/* ==========================================================================
+   Navigation (Matches the dark UI screenshot)
+   ========================================================================== */
+.main-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1.5rem;
+    border-bottom: 1px solid var(--clr-border);
+    background-color: rgba(9, 9, 11, 0.6);
+    backdrop-filter: blur(12px);
+    z-index: 100;
+}
+
+.nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+.brand-logo {
+    width: 20px;
+    height: 20px;
+    background: linear-gradient(135deg, #e4e4e7 0%, #a1a1aa 100%);
+    border-radius: 50%;
+}
+
+.nav-links {
+    display: flex;
+    gap: 2rem;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.nav-link {
+    color: var(--clr-text-muted);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.2s;
+}
+
+.nav-link:hover,
+.nav-link.active {
+    color: var(--clr-text);
+}
+
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.search-input {
+    background-color: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--clr-border);
+    color: var(--clr-text);
+    padding: 0.4rem 1rem;
+    border-radius: 6px;
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    width: 200px;
+    transition: border-color 0.2s;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #52525b;
+}
+
+.avatar img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: block;
+}
+
+/* ==========================================================================
+   Hero Section & Glass Buttons
+   ========================================================================== */
+.hero-section {
+    flex: 1;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    /* Centered horizontally */
+    padding: 0 var(--spacing-lg);
+    overflow: hidden;
+}
+
+.hero-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    z-index: 2;
+    transform: translateY(-8%);
+    /* Slightly above the middle */
+    margin-top: 85px;
+    /* Pushing it 85px lower as requested */
+}
+
+.hero-title {
+    font-family: var(--font-heading);
+    font-size: clamp(3rem, 8vw, 8rem);
+    letter-spacing: -0.04em;
+    line-height: 1.1;
+    margin-bottom: var(--spacing-md);
+    text-transform: uppercase;
+
+    /* Chij-L Web style exact gradient */
+    background: linear-gradient(90deg, #d5f7ff 0%, #b2dcff 25%, #ec9aff 50%, #ffc1cf 75%, #ffe8c5 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.cta-group {
+    display: flex;
+    gap: var(--spacing-md);
+    justify-content: center;
+}
+
+.btn-glass {
+    padding: 1rem 2.75rem;
+    font-family: var(--font-body);
+    font-weight: 500;
+    font-size: 1.1875rem;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s var(--ease-out-expo);
+
+    /* Enhanced Glassmorphism styling */
+    background: rgba(255, 255, 255, 0.08);
+    color: #FFF;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+}
+
+.btn-glass:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.4);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+}
+
+/* ==========================================================================
+   Mesh Gradient Graphic
+   ========================================================================== */
+.hero-visual {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 80vw;
+    height: 80vw;
+    max-width: 1000px;
+    max-height: 1000px;
+    z-index: 1;
+    filter: blur(45px);
+    opacity: 0.85;
+    pointer-events: none;
+
+    animation:
+        riseAndExpand 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards,
+        breathe 4s ease-in-out 1.5s infinite alternate;
+}
+
+.mesh-element {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    /* Circle form */
+    background-color: var(--mesh-darkblue);
+    background-image:
+        radial-gradient(circle at 30% 30%, var(--mesh-orange) 0%, transparent 60%),
+        radial-gradient(circle at 70% 30%, var(--mesh-light-purple) 0%, transparent 60%),
+        radial-gradient(circle at 30% 70%, var(--mesh-cyan) 0%, transparent 60%),
+        radial-gradient(circle at 70% 70%, var(--mesh-darkblue) 0%, transparent 60%);
+}
+
+@keyframes riseAndExpand {
+    0% {
+        top: 120%;
+        /* Start below screen */
+        transform: translate(-50%, -50%) scale(0.1);
+        opacity: 0;
+    }
+
+    100% {
+        top: 50%;
+        /* Center of screen */
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+@keyframes breathe {
+    0% {
+        transform: translate(-50%, -50%) scale(1);
+    }
+
+    100% {
+        transform: translate(-50%, -50%) scale(1.15);
+        /* Exhale out wider */
+    }
+}
+
+/* ==========================================================================
+   Hero Entrance & Breathing Animations
+   ========================================================================== */
+.hero-title {
+    opacity: 0;
+    /* starts hidden */
+    animation:
+        waterDrop 1.4s cubic-bezier(0.22, 1, 0.36, 1) forwards,
+        elementBreathe 4s ease-in-out infinite alternate forwards;
+    animation-delay: 0.2s, 1.6s;
+    /* slightly delayed behind the background orbs */
+}
+
+.btn-glass {
+    opacity: 0;
+}
+
+.cta-group .btn-glass:nth-child(1) {
+    animation:
+        buttonEntrance 1.4s cubic-bezier(0.22, 1, 0.36, 1) forwards,
+        buttonBreathe 4s ease-in-out infinite forwards;
+    animation-delay: 0.3s, 1.7s;
+}
+
+.cta-group .btn-glass:nth-child(2) {
+    animation:
+        buttonEntrance 1.4s cubic-bezier(0.22, 1, 0.36, 1) forwards,
+        buttonBreathe 4s ease-in-out infinite forwards;
+    animation-delay: 0.5s, 1.9s;
+}
+
+/* Updating this to use independent 'translate' so the CSS 'scale' animation doesn't fight it */
+.btn-glass:hover {
+    transform: none !important;
+    translate: 0 -3px;
+}
+
+@keyframes waterDrop {
+    0% {
+        opacity: 0;
+        translate: 0 -50vh;
+        scale: 0;
+        rotate: -1080deg;
+    }
+
+    40% {
+        opacity: 1;
+        translate: 0 0;
+        scale: 0.85;
+    }
+
+    70% {
+        translate: 0 0;
+        scale: 1.08;
+    }
+
+    100% {
+        opacity: 1;
+        translate: 0 0;
+        scale: 1;
+        rotate: 0deg;
+    }
+}
+
+@keyframes elementBreathe {
+    0% {
+        scale: 1;
+    }
+
+    100% {
+        scale: 1.04;
+        /* subtle scale up like inheriting lungs */
+    }
+}
+
+@keyframes buttonEntrance {
+    0% {
+        scale: 0;
+        rotate: -1080deg;
+        opacity: 0;
+    }
+
+    40% {
+        scale: 0.85;
+        opacity: 1;
+    }
+
+    70% {
+        scale: 1.08;
+        opacity: 1;
+    }
+
+    100% {
+        scale: 1;
+        rotate: 0deg;
+        opacity: 1;
+    }
+}
+
+@keyframes buttonBreathe {
+    0% {
+        scale: 1;
+    }
+
+    50% {
+        scale: 1.045;
+    }
+
+    100% {
+        scale: 1;
+    }
+}
+
+/* ==========================================================================
+   Explore Overlay
+   ========================================================================== */
+.explore-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+}
+
+.explore-overlay.open {
+    opacity: 1;
+    pointer-events: all;
+}
+
+/* Close Button */
+.explore-close {
+    position: absolute;
+    top: 24px;
+    right: 32px;
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 2.4rem;
+    cursor: pointer;
+    line-height: 1;
+    transition: color 0.2s, transform 0.2s;
+    z-index: 1010;
+}
+
+.explore-close:hover {
+    color: #fff;
+    transform: scale(1.15);
+}
+
+/* Book Container */
+.explore-book {
+    position: relative;
+    width: 420px;
+    height: 580px;
+    perspective: 1200px;
+}
+
+/* Individual Page */
+.explore-page {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.35);
+    overflow: hidden;
+    backface-visibility: hidden;
+    transform-origin: center center;
+    /* Hidden by default */
+    opacity: 0;
+    pointer-events: none;
+    transform: rotateY(90deg);
+}
+
+.explore-page.active {
+    opacity: 1;
+    pointer-events: none;
+    transform: rotateY(0deg);
+}
+
+.explore-overlay.open .explore-page.active {
+    pointer-events: all;
+}
+
+/* Flip animations */
+.explore-page.flip-out-fwd {
+    animation: flipOutFwd 0.8s cubic-bezier(0.645, 0.045, 0.355, 1.000) forwards;
+}
+
+.explore-page.flip-in-fwd {
+    animation: flipInFwd 0.8s cubic-bezier(0.645, 0.045, 0.355, 1.000) forwards;
+}
+
+.explore-page.flip-out-back {
+    animation: flipOutBack 0.8s cubic-bezier(0.645, 0.045, 0.355, 1.000) forwards;
+}
+
+.explore-page.flip-in-back {
+    animation: flipInBack 0.8s cubic-bezier(0.645, 0.045, 0.355, 1.000) forwards;
+}
+
+@keyframes flipOutFwd {
+    0% {
+        opacity: 1;
+        transform: rotateY(0deg);
+    }
+
+    100% {
+        opacity: 0;
+        transform: rotateY(-90deg);
+    }
+}
+
+@keyframes flipInFwd {
+    0% {
+        opacity: 0;
+        transform: rotateY(90deg);
+    }
+
+    100% {
+        opacity: 1;
+        transform: rotateY(0deg);
+    }
+}
+
+@keyframes flipOutBack {
+    0% {
+        opacity: 1;
+        transform: rotateY(0deg);
+    }
+
+    100% {
+        opacity: 0;
+        transform: rotateY(90deg);
+    }
+}
+
+@keyframes flipInBack {
+    0% {
+        opacity: 0;
+        transform: rotateY(-90deg);
+    }
+
+    100% {
+        opacity: 1;
+        transform: rotateY(0deg);
+    }
+}
+
+/* Image Placeholder — top 2/8 of the card */
+.page-image-placeholder {
+    flex: 0 0 25%;
+    /* 2/8 = 25% */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 16px 16px 0;
+    border: 2px dashed rgba(255, 255, 255, 0.25);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.06);
+    color: rgba(255, 255, 255, 0.35);
+}
+
+/* Content area — remaining 6/8 */
+.page-content {
+    flex: 1;
+    margin: 12px 16px 16px;
+    border-radius: 10px;
+}
+
+/* Navigation Arrows */
+.explore-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 1.4rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: background 0.2s, transform 0.2s;
+    z-index: 10;
+    line-height: 1;
+}
+
+.explore-arrow:hover {
+    background: rgba(255, 255, 255, 0.18);
+    transform: translateY(-50%) scale(1.1);
+}
+
+.explore-arrow-left {
+    left: -48px;
+    display: none;
+    /* hidden on page 1 by default */
+}
+
+.explore-arrow-right {
+    right: -48px;
+}
+
+/* ==========================================================================
+   Responsive Logic
+   ========================================================================== */
+@media (max-width: 768px) {
+    .nav-links {
+        display: none;
+    }
+
+    .hero-visual {
+        width: 100vw;
+        height: 100vw;
+        filter: blur(30px);
+    }
+}
