@@ -549,7 +549,8 @@ main {
 
 /* Image Placeholder — top 35% of the card */
 .page-image-placeholder {
-    flex: 0 0 35%;
+    flex: 0 0 auto;
+    height: 35%;
     display: flex;
     justify-content: center;
     align-items: center;
