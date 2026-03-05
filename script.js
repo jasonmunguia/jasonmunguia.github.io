@@ -11,6 +11,33 @@
     const TOTAL = pages.length; // 10
     let current = 0;
     let flipping = false;
+    let typewriterTimer = null;
+
+    // Typewriter effect
+    function typewrite(el) {
+        if (typewriterTimer) clearTimeout(typewriterTimer);
+        const text = el.dataset.text || '';
+        el.innerHTML = '';
+        const cursor = document.createElement('span');
+        cursor.className = 'typewriter-cursor';
+        el.appendChild(cursor);
+        let i = 0;
+        const speed = 28; // ms per character
+
+        function tick() {
+            if (i < text.length) {
+                cursor.insertAdjacentText('beforebegin', text[i]);
+                i++;
+                typewriterTimer = setTimeout(tick, speed);
+            }
+        }
+        typewriterTimer = setTimeout(tick, 120); // slight delay after flip
+    }
+
+    function startTypewriterForPage(index) {
+        const content = pages[index].querySelector('.page-content');
+        if (content) typewrite(content);
+    }
 
     // Open overlay
     openBtn.addEventListener('click', function (e) {
@@ -76,6 +103,7 @@
             current = targetIndex;
             updateArrows();
             flipping = false;
+            startTypewriterForPage(current);
 
             outPage.removeEventListener('animationend', onDone);
         }
@@ -93,6 +121,7 @@
         current = index;
         flipping = false;
         updateArrows();
+        startTypewriterForPage(index);
     }
 
     function updateArrows() {

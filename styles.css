@@ -547,10 +547,9 @@ main {
     }
 }
 
-/* Image Placeholder — top 2/8 of the card */
+/* Image Placeholder — top 35% of the card */
 .page-image-placeholder {
-    flex: 0 0 25%;
-    /* 2/8 = 25% */
+    flex: 0 0 35%;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -561,11 +560,33 @@ main {
     color: rgba(255, 255, 255, 0.35);
 }
 
-/* Content area — remaining 6/8 */
+/* Content area — remaining space */
 .page-content {
     flex: 1;
     margin: 12px 16px 16px;
     border-radius: 10px;
+    padding: 12px;
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    color: var(--clr-text);
+    line-height: 1.6;
+    overflow: hidden;
+}
+
+/* Typewriter cursor */
+.page-content .typewriter-cursor {
+    display: inline-block;
+    width: 2px;
+    height: 1em;
+    background: rgba(255, 255, 255, 0.7);
+    margin-left: 2px;
+    vertical-align: text-bottom;
+    animation: cursorBlink 0.7s step-end infinite;
+}
+
+@keyframes cursorBlink {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0; }
 }
 
 /* Navigation Arrows */
