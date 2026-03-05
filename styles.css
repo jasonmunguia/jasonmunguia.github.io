@@ -455,7 +455,7 @@ main {
     position: relative;
     background: linear-gradient(160deg, #7d4b2a 0%, #4e2a0f 55%, #7d4b2a 100%);
     border-radius: 6px 18px 18px 6px;
-    padding: 28px 32px 32px 48px;
+    padding: 12px 32px 32px 48px;
     box-shadow:
         -12px 0 0 #2e1508,
         0 28px 72px rgba(0, 0, 0, 0.7),
@@ -480,7 +480,7 @@ main {
     color: #FFD700;
     font-size: 2rem;
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     text-shadow: 2px 3px 8px rgba(0, 0, 0, 0.6), 0 0 24px rgba(255, 215, 0, 0.25);
     letter-spacing: 0.03em;
     position: relative;
@@ -592,7 +592,7 @@ main {
 /* Image Placeholder — top 35% of the card */
 .page-image-placeholder {
     flex: 0 0 auto;
-    height: 35%;
+    height: calc(35% + 60px);
     display: flex;
     justify-content: center;
     align-items: center;
