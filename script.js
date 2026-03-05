@@ -1,4 +1,29 @@
 // ============================================================
+// Contact Card Logic
+// ============================================================
+(function () {
+    const overlay = document.getElementById('contact-overlay');
+    const openBtn = document.getElementById('contact-btn');
+    const closeBtn = document.getElementById('contact-close');
+
+    openBtn.addEventListener('click', function () {
+        overlay.classList.add('open');
+    });
+
+    closeBtn.addEventListener('click', function () {
+        overlay.classList.remove('open');
+    });
+
+    overlay.addEventListener('click', function (e) {
+        if (e.target === overlay) overlay.classList.remove('open');
+    });
+
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') overlay.classList.remove('open');
+    });
+})();
+
+// ============================================================
 // Explore Overlay — Book Page Flip Logic
 // ============================================================
 (function () {
