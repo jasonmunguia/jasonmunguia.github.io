@@ -6,10 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jason Munguia | Digital Experience</title>
 
-    <!-- Google Fonts: Syncopate and Inter -->
+    <!-- Google Fonts: Syncopate, Inter, Pacifico -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Syncopate:wght@400;700&display=swap"
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Pacifico&family=Syncopate:wght@400;700&display=swap"
         rel="stylesheet">
 
     <link rel="stylesheet" href="styles.css">
@@ -60,7 +60,11 @@
     <!-- Explore Overlay -->
     <div id="explore-overlay" class="explore-overlay">
         <button id="explore-close" class="explore-close" aria-label="Close">&times;</button>
-        <div class="explore-book">
+        <div class="book-wrapper">
+            <button id="explore-prev" class="explore-arrow explore-arrow-left" aria-label="Previous page">&#8249;</button>
+            <div class="book-cover">
+                <h2 class="book-title">My Story</h2>
+                <div class="explore-book">
             <div class="explore-page active" data-page="1">
                 <div class="page-image-placeholder"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="1.5">
@@ -151,11 +155,10 @@
                     </svg></div>
                 <div class="page-content" data-text="Your text for page 10 goes here. Edit the data-text attribute on this element to change what appears."></div>
             </div>
-            <!-- Navigation arrows -->
-            <button id="explore-prev" class="explore-arrow explore-arrow-left"
-                aria-label="Previous page">&#8249;</button>
+                </div><!-- /explore-book -->
+            </div><!-- /book-cover -->
             <button id="explore-next" class="explore-arrow explore-arrow-right" aria-label="Next page">&#8250;</button>
-        </div>
+        </div><!-- /book-wrapper -->
     </div>
 
     <script src="script.js"></script>

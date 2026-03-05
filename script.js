@@ -125,7 +125,7 @@
     }
 
     function updateArrows() {
-        prevBtn.style.display = current === 0 ? 'none' : 'flex';
-        nextBtn.style.display = current === TOTAL - 1 ? 'none' : 'flex';
+        prevBtn.style.visibility = current === 0 ? 'hidden' : 'visible';
+        nextBtn.style.visibility = current === TOTAL - 1 ? 'hidden' : 'visible';
     }
 })();
