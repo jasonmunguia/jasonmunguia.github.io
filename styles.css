@@ -972,6 +972,12 @@ main {
     border: 1px solid rgba(123, 143, 255, 0.28);
 }
 
+.bento-pill-cyan {
+    background: rgba(0, 242, 254, 0.12);
+    color: #00f2fe;
+    border: 1px solid rgba(0, 242, 254, 0.28);
+}
+
 /* Rock Climbing card */
 .bento-goal {
     font-size: 1.05rem;
@@ -1027,6 +1033,77 @@ main {
     height: 52px;
     background: rgba(255, 255, 255, 0.1);
     flex-shrink: 0;
+}
+
+/* Philosophy & Writing card */
+.bento-philosophy       { grid-column: 1 / 4; grid-row: 4; }
+.bento-philosophy .bento-glow { background: #fbbf24; }
+.bento-philosophy:hover { border-color: rgba(251, 191, 36, 0.3); }
+
+.bento-phil-heading {
+    font-family: var(--font-heading);
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--clr-text-muted);
+    margin-top: 8px;
+    margin-bottom: 2px;
+}
+
+.bento-phil-entry {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-bottom: 10px;
+}
+
+.bento-phil-name {
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--clr-text);
+}
+
+.bento-phil-why {
+    font-size: 0.82rem;
+    color: var(--clr-text-muted);
+    line-height: 1.4;
+}
+
+.bento-phil-link {
+    display: inline-block;
+    font-size: 0.78rem;
+    color: #fbbf24;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(251, 191, 36, 0.35);
+    transition: border-color 0.2s, color 0.2s;
+    align-self: flex-start;
+    margin-top: 2px;
+}
+
+.bento-phil-link:hover {
+    color: #fde68a;
+    border-color: #fde68a;
+}
+
+.bento-quote-side {
+    justify-content: center;
+    gap: 10px;
+}
+
+.bento-quote {
+    font-size: clamp(0.95rem, 2vw, 1.1rem);
+    font-style: italic;
+    color: var(--clr-text);
+    line-height: 1.6;
+    border-left: 3px solid #fbbf24;
+    padding-left: 16px;
+    margin: 0;
+}
+
+.bento-quote-attr {
+    font-size: 0.8rem;
+    color: #fbbf24;
+    padding-left: 19px;
 }
 
 /* Music card */
@@ -1266,7 +1343,8 @@ main {
     .bento-climbing { grid-column: 2; grid-row: 1; }
     .bento-fitness  { grid-column: 1; grid-row: 2; }
     .bento-ai       { grid-column: 2; grid-row: 2; }
-    .bento-music    { grid-column: 1 / 3; grid-row: 3; }
+    .bento-music        { grid-column: 1 / 3; grid-row: 3; }
+    .bento-philosophy   { grid-column: 1 / 3; grid-row: 4; }
 
     .bento-music-right {
         border-left: none;
@@ -1290,7 +1368,8 @@ main {
     .bento-climbing,
     .bento-fitness,
     .bento-ai,
-    .bento-music {
+    .bento-music,
+    .bento-philosophy {
         grid-column: 1;
         grid-row: auto;
     }
