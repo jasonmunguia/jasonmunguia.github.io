@@ -48,8 +48,8 @@
     window.addEventListener('touchmove',  function (e) { onPointer(e.touches[0].clientX, e.touches[0].clientY); }, { passive: true });
     window.addEventListener('mouseleave', function ()  { mx = -1; my = -1; });
 
-    var COEF = 0.40;    // faster spread so waves fill the screen quickly
-    var DAMP = 0.9970;  // high persistence — rings travel far
+    var COEF = 0.37;    // wave spread speed — below 0.5 for stability
+    var DAMP = 0.9965;  // slight damping so old rings fade, new ones visible
 
     function splash(gx, gy, str) {
         gx = gx | 0; gy = gy | 0;
@@ -109,6 +109,9 @@
         var tmp = A; A = B; B = tmp;
     }
 
+    // Near-black ambient — flat water should be almost invisible
+    var AMBIENT = 10;
+
     function render() {
         var d = imgData.data;
         var sw = SW, sh = SH;
@@ -118,33 +121,31 @@
                 var i = y * sw + x;
                 var h = A[i];
 
-                // Surface gradient → reflective specular shading
-                var dhx = (x > 0 && x < sw-1) ? (A[i+1]  - A[i-1])  * 2.0 : 0;
-                var dhy = (y > 0 && y < sh-1) ? (A[i+sw] - A[i-sw]) * 2.0 : 0;
+                // Surface gradient → specular shading (simulates light reflecting off slope)
+                var dhx = (x > 0 && x < sw-1) ? (A[i+1]  - A[i-1])  * 1.8 : 0;
+                var dhy = (y > 0 && y < sh-1) ? (A[i+sw] - A[i-sw]) * 1.8 : 0;
 
-                // Primary specular: light from upper-left
-                var s1 = Math.max(0, dhx * 0.45 - dhy * 0.52);
-                s1 = s1 * s1 * 700;
+                // Two specular lobes for organic ring-edge highlights
+                var s1 = Math.max(0, dhx * 0.50 - dhy * 0.55);
+                s1 = s1 * s1 * 620;
 
-                // Secondary specular: catches opposite slopes
-                var s2 = Math.max(0, -dhx * 0.28 + dhy * 0.20);
-                s2 = s2 * s2 * 280;
+                var s2 = Math.max(0, -dhx * 0.32 + dhy * 0.22);
+                s2 = s2 * s2 * 240;
 
-                // Height mapping: crests brighter, troughs slightly darker but NEVER pure black
-                // h > 0: brighter  |  h < 0: slightly dimmer (not black)
-                var heightShift = h > 0 ? h * 10 : h * 4;
-
-                // Ambient 32 ensures flat water is always a visible dark grey
-                var b = Math.min(255, Math.max(0, 32 + heightShift + s1 + s2));
+                // Height shift: crests add brightness, troughs subtract a little
+                // Clamp minimum to half-ambient so troughs never go pure black
+                var heightShift = h > 0 ? h * 11 : h * 3;
+                var b = Math.min(255, Math.max(AMBIENT >> 1, AMBIENT + heightShift + s1 + s2));
 
                 var p = i * 4;
-                d[p]     = b * 0.86 | 0;   // cool blue-white tint
-                d[p + 1] = b * 0.92 | 0;
+                // Deep blue-black water tint; specular highlights pull toward white
+                d[p]     = b * 0.80 | 0;
+                d[p + 1] = b * 0.88 | 0;
                 d[p + 2] = b         | 0;
             }
         }
         offCtx.putImageData(imgData, 0, 0);
-        ctx.fillStyle = '#030508';
+        ctx.fillStyle = '#020406';
         ctx.fillRect(0, 0, W, H);
         ctx.imageSmoothingEnabled = true;
         ctx.imageSmoothingQuality = 'high';
