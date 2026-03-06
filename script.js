@@ -154,3 +154,42 @@
         nextBtn.style.visibility = current === TOTAL - 1 ? 'hidden' : 'visible';
     }
 })();
+
+// ============================================================
+// Bento Grid — Animated Counters (trigger on scroll into view)
+// ============================================================
+(function () {
+    var counters = Array.from(document.querySelectorAll('.bento-counter'));
+    if (!counters.length) return;
+
+    function animateCounter(el) {
+        var target = parseInt(el.dataset.target, 10);
+        var duration = 1800;
+        var start = null;
+
+        function step(timestamp) {
+            if (!start) start = timestamp;
+            var elapsed = timestamp - start;
+            var progress = Math.min(elapsed / duration, 1);
+            // ease-out cubic
+            var eased = 1 - Math.pow(1 - progress, 3);
+            el.textContent = Math.round(eased * target).toLocaleString();
+            if (progress < 1) requestAnimationFrame(step);
+        }
+
+        requestAnimationFrame(step);
+    }
+
+    var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+                animateCounter(entry.target);
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.5 });
+
+    counters.forEach(function (counter) {
+        observer.observe(counter);
+    });
+})();
