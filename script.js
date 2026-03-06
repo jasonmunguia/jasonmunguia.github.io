@@ -1,5 +1,5 @@
 // ============================================================
-// Black Water Canvas — physics wave simulation
+// Black Water Canvas — realistic wave simulation with specular shading
 // ============================================================
 (function () {
     var canvas = document.getElementById('water-canvas');
@@ -7,17 +7,14 @@
     var ctx = canvas.getContext('2d');
     var W = 0, H = 0;
 
-    // Simulation grid — render at reduced resolution, scale up
-    var RES = 4;
+    var RES = 3;        // grid resolution: lower = finer waves
     var SW = 0, SH = 0;
-    var A, B; // double-buffered height fields (Float32Array)
+    var A, B;           // double-buffered height fields
 
-    // Offscreen canvas for pixel output
     var off = document.createElement('canvas');
     var offCtx = off.getContext('2d');
     var imgData;
 
-    // Current mouse/touch position in grid coords
     var mx = -1, my = -1;
 
     function resize() {
@@ -30,57 +27,68 @@
         off.width  = SW;
         off.height = SH;
         imgData = offCtx.createImageData(SW, SH);
-        // Pre-fill alpha channel
-        for (var i = 3; i < imgData.data.length; i += 4) imgData.data[i] = 255;
+        for (var k = 3; k < imgData.data.length; k += 4) imgData.data[k] = 255;
     }
     resize();
     window.addEventListener('resize', resize);
 
-    // Track pointer continuously — no threshold, no discrete events
     function onPointer(cx, cy) {
         var r = canvas.getBoundingClientRect();
         mx = ((cx - r.left) / RES) | 0;
         my = ((cy - r.top)  / RES) | 0;
     }
-    window.addEventListener('mousemove', function (e) { onPointer(e.clientX, e.clientY); });
-    window.addEventListener('touchmove', function (e) { onPointer(e.touches[0].clientX, e.touches[0].clientY); }, { passive: true });
-    window.addEventListener('mouseleave', function () { mx = -1; my = -1; });
+    window.addEventListener('mousemove',  function (e) { onPointer(e.clientX, e.clientY); });
+    window.addEventListener('touchmove',  function (e) { onPointer(e.touches[0].clientX, e.touches[0].clientY); }, { passive: true });
+    window.addEventListener('mouseleave', function ()  { mx = -1; my = -1; });
 
-    // Add a disturbance splash at grid coords
-    function splash(gx, gy, strength) {
+    // COEF: lower = slower wave propagation (more hypnotic, realistic)
+    var COEF = 0.26;
+    // DAMP close to 1.0 = waves persist a long time before fading
+    var DAMP = 0.9972;
+
+    function splash(gx, gy, str) {
         gx = gx | 0; gy = gy | 0;
-        for (var dy = -2; dy <= 2; dy++) {
-            for (var dx = -2; dx <= 2; dx++) {
+        var r = 3;
+        for (var dy = -r; dy <= r; dy++) {
+            for (var dx = -r; dx <= r; dx++) {
                 var nx = gx + dx, ny = gy + dy;
                 if (nx > 0 && nx < SW - 1 && ny > 0 && ny < SH - 1) {
-                    var dist = Math.sqrt(dx*dx + dy*dy);
-                    A[ny * SW + nx] += strength * Math.max(0, 1 - dist / 2.5);
+                    var dd = dx * dx + dy * dy;
+                    if (dd <= r * r) A[ny * SW + nx] += str * (1 - Math.sqrt(dd) / r);
                 }
             }
         }
     }
 
-    // Ambient rain drops — random positions, random cadence
-    setInterval(function () {
-        var n = 1 + Math.random() * 2 | 0;
-        for (var i = 0; i < n; i++) {
-            splash(
-                1 + (Math.random() * (SW - 2)) | 0,
-                1 + (Math.random() * (SH - 2)) | 0,
-                0.8 + Math.random() * 1.4
-            );
-        }
-    }, 180);
+    // 6 persistent gentle emitters keep the surface alive at all times
+    var emitters = [
+        { xr: 0.14, yr: 0.26, amp: 1.8, ms: 2100 },
+        { xr: 0.70, yr: 0.18, amp: 1.6, ms: 2400 },
+        { xr: 0.85, yr: 0.64, amp: 1.9, ms: 1900 },
+        { xr: 0.28, yr: 0.72, amp: 1.7, ms: 2300 },
+        { xr: 0.50, yr: 0.44, amp: 1.5, ms: 2600 },
+        { xr: 0.90, yr: 0.32, amp: 1.6, ms: 2000 },
+    ];
+    emitters.forEach(function (e, idx) {
+        setTimeout(function fire() {
+            splash((e.xr * W / RES) | 0, (e.yr * H / RES) | 0, e.amp);
+            setTimeout(fire, e.ms);
+        }, idx * 380);
+    });
 
-    var DAMP = 0.991;
+    // One slow heavy raindrop every 4 seconds
+    setInterval(function () {
+        splash(
+            (1 + Math.random() * (SW - 2)) | 0,
+            (1 + Math.random() * (SH - 2)) | 0,
+            3.2
+        );
+    }, 4000);
 
     function step() {
-        // Cursor disturbance — applied every physics step for smooth tracking
-        if (mx > 0 && mx < SW - 1 && my > 0 && my < SH - 1) {
-            splash(mx, my, 2.5);
+        if (mx > 1 && mx < SW - 2 && my > 1 && my < SH - 2) {
+            splash(mx, my, 3.0);
         }
-
-        // Wave equation: buf2 = (neighbors_sum / 2) - buf1,  then damp
         for (var y = 1; y < SH - 1; y++) {
             for (var x = 1; x < SW - 1; x++) {
                 var i = y * SW + x;
@@ -89,28 +97,48 @@
                     A[(y + 1) * SW + x] +
                     A[y * SW + (x - 1)] +
                     A[y * SW + (x + 1)]
-                ) * 0.5 - B[i];
+                ) * COEF - A[i];
                 B[i] *= DAMP;
             }
         }
-        // Swap buffers
         var tmp = A; A = B; B = tmp;
     }
 
     function render() {
         var d = imgData.data;
-        for (var i = 0, n = SW * SH; i < n; i++) {
-            var h = A[i];
-            // Only bright crests become visible — troughs stay black
-            var b = h > 0 ? Math.min(255, Math.pow(h / 3.0, 1.6) * 280) : 0;
-            var p = i * 4;
-            d[p]     = b * 0.87 | 0;  // slight cool-white tint
-            d[p + 1] = b * 0.93 | 0;
-            d[p + 2] = b         | 0;
+        var sw = SW, sh = SH;
+
+        for (var y = 0; y < sh; y++) {
+            for (var x = 0; x < sw; x++) {
+                var i = y * sw + x;
+                var h = A[i];
+
+                // Compute surface gradient for reflective shading
+                var dhx = (x > 0 && x < sw-1) ? (A[i+1]  - A[i-1])  * 2.8 : 0;
+                var dhy = (y > 0 && y < sh-1) ? (A[i+sw] - A[i-sw]) * 2.8 : 0;
+
+                // Primary specular: light from upper-left
+                var s1 = Math.max(0,  dhx * 0.45 - dhy * 0.52);
+                s1 = s1 * s1 * 820;
+
+                // Secondary specular: light from right catches opposite slopes
+                var s2 = Math.max(0, -dhx * 0.28 + dhy * 0.18);
+                s2 = s2 * s2 * 320;
+
+                // Crest glow: crests are softly brighter
+                var crest = Math.max(0, h) * 10;
+
+                // Ambient: ensures water is always faintly visible (not an abyss)
+                var b = Math.min(255, 18 + crest + s1 + s2);
+
+                var p = i * 4;
+                d[p]     = b * 0.86 | 0;   // cool blue-white tint
+                d[p + 1] = b * 0.92 | 0;
+                d[p + 2] = b         | 0;
+            }
         }
         offCtx.putImageData(imgData, 0, 0);
-
-        ctx.fillStyle = '#020405';
+        ctx.fillStyle = '#030508';
         ctx.fillRect(0, 0, W, H);
         ctx.imageSmoothingEnabled = true;
         ctx.imageSmoothingQuality = 'high';
@@ -118,8 +146,7 @@
     }
 
     function frame() {
-        step();
-        step(); // 2 physics steps per render — waves travel faster, look more natural
+        step();   // 1 step per frame = slow, natural wave movement
         render();
         requestAnimationFrame(frame);
     }
