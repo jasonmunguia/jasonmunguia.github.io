@@ -1123,6 +1123,26 @@ main {
     border-color: rgba(29, 185, 84, 0.45);
 }
 
+/* AI card news label */
+.bento-ai-news-label {
+    color: #7b8fff;
+    font-weight: 600;
+}
+
+/* AI card YouTube button override (blue tint) */
+.bento-yt-ai {
+    margin-top: 0;
+    background: rgba(123, 143, 255, 0.1);
+    border-color: rgba(123, 143, 255, 0.25);
+    color: #7b8fff;
+}
+
+.bento-yt-ai:hover {
+    background: rgba(123, 143, 255, 0.2);
+    border-color: rgba(123, 143, 255, 0.45);
+    color: #a0b0ff;
+}
+
 /* YouTube button */
 .bento-yt {
     display: inline-flex;
