@@ -784,8 +784,8 @@ main {
 .scroll-cue {
     position: absolute;
     bottom: 32px;
-    left: 50%;
-    transform: translateX(-50%);
+    left: 0;
+    right: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -827,6 +827,7 @@ main {
     letter-spacing: -0.03em;
     text-transform: uppercase;
     margin-bottom: 48px;
+    text-align: center;
     background: linear-gradient(90deg, #d5f7ff 0%, #b2dcff 40%, #ec9aff 100%);
     -webkit-background-clip: text;
     background-clip: text;
