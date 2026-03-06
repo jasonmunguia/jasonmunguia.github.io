@@ -290,6 +290,78 @@ main {
         drop-shadow(3px 3px 6px rgba(0,0,0,0.6));
 }
 
+/* Gift button */
+.btn-gift {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.6rem 1.6rem;
+    margin-bottom: 1.5rem;
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    border-radius: 50px;
+    cursor: pointer;
+    background: rgba(8, 5, 2, 0.5);
+    border: 1px solid rgba(184, 124, 34, 0.35);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4), 0 0 12px rgba(184,124,34,0.08), inset 0 1px 0 rgba(255,210,90,0.06);
+    transition: all 0.3s var(--ease-out-expo);
+    opacity: 0;
+    animation: buttonEntrance 1.4s cubic-bezier(0.22, 1, 0.36, 1) 0.4s forwards;
+}
+
+.btn-gift:hover {
+    border-color: rgba(232, 192, 96, 0.6);
+    box-shadow: 0 6px 28px rgba(0,0,0,0.55), 0 0 20px rgba(184,124,34,0.18), inset 0 1px 0 rgba(255,210,90,0.1);
+    translate: 0 -2px;
+}
+
+.btn-gift:active {
+    translate: 0 0;
+}
+
+.gift-icon {
+    font-size: 1rem;
+    line-height: 1;
+}
+
+.gift-label {
+    background: linear-gradient(
+        90deg,
+        #2a1200 0%,
+        #7a4800 18%,
+        #c9933a 30%,
+        #f0c86a 38%,
+        #fff8d0 43%,
+        #f0c86a 48%,
+        #c9933a 58%,
+        #7a4800 72%,
+        #2a1200 90%
+    );
+    background-size: 320% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
+    animation: goldShimmer 5s linear 1.9s infinite;
+}
+
+.gift-status {
+    font-size: 0.78rem;
+    color: rgba(232, 192, 96, 0.6);
+    min-width: 0;
+    transition: opacity 0.3s;
+}
+
+/* gift button playing state */
+.btn-gift.playing {
+    border-color: rgba(232, 192, 96, 0.7);
+    box-shadow: 0 0 24px rgba(184,124,34,0.3), 0 4px 20px rgba(0,0,0,0.4);
+}
+
 /* ==========================================================================
    Mesh Gradient Graphic
    ========================================================================== */

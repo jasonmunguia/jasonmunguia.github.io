@@ -1,4 +1,32 @@
 // ============================================================
+// Gift Audio Button
+// ============================================================
+(function () {
+    var btn = document.getElementById('gift-btn');
+    var audio = document.getElementById('gift-audio');
+    var status = document.getElementById('gift-status');
+
+    btn.addEventListener('click', function () {
+        if (audio.paused) {
+            audio.currentTime = 0;
+            audio.play();
+            btn.classList.add('playing');
+            status.textContent = '▶';
+        } else {
+            audio.pause();
+            audio.currentTime = 0;
+            btn.classList.remove('playing');
+            status.textContent = '';
+        }
+    });
+
+    audio.addEventListener('ended', function () {
+        btn.classList.remove('playing');
+        status.textContent = '';
+    });
+})();
+
+// ============================================================
 // Contact Card Logic
 // ============================================================
 (function () {
