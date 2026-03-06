@@ -194,8 +194,20 @@ main {
     margin-bottom: var(--spacing-md);
     text-transform: uppercase;
 
-    /* Chij-L Web style exact gradient */
-    background: linear-gradient(90deg, #d5f7ff 0%, #b2dcff 25%, #ec9aff 50%, #ffc1cf 75%, #ffe8c5 100%);
+    /* Moving gold shimmer */
+    background: linear-gradient(
+        90deg,
+        #3d2200 0%,
+        #9c6515 12%,
+        #c9933a 25%,
+        #f0c86a 38%,
+        #fde98a 50%,
+        #f0c86a 62%,
+        #c9933a 75%,
+        #9c6515 88%,
+        #3d2200 100%
+    );
+    background-size: 300% auto;
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -244,8 +256,8 @@ main {
     max-width: 1000px;
     max-height: 1000px;
     z-index: 1;
-    filter: blur(45px);
-    opacity: 0.85;
+    filter: blur(70px);
+    opacity: 0.55;
     pointer-events: none;
 
     animation:
@@ -257,13 +269,12 @@ main {
     width: 100%;
     height: 100%;
     border-radius: 50%;
-    /* Circle form */
-    background-color: var(--mesh-darkblue);
+    background-color: #030510;
     background-image:
-        radial-gradient(circle at 30% 30%, var(--mesh-orange) 0%, transparent 60%),
-        radial-gradient(circle at 70% 30%, var(--mesh-light-purple) 0%, transparent 60%),
-        radial-gradient(circle at 30% 70%, var(--mesh-cyan) 0%, transparent 60%),
-        radial-gradient(circle at 70% 70%, var(--mesh-darkblue) 0%, transparent 60%);
+        radial-gradient(circle at 40% 40%, rgba(30, 58, 138, 0.65) 0%, transparent 55%),
+        radial-gradient(circle at 62% 38%, rgba(15, 25, 90, 0.45) 0%, transparent 52%),
+        radial-gradient(circle at 38% 62%, rgba(10, 18, 75, 0.5) 0%, transparent 52%),
+        radial-gradient(circle at 60% 62%, rgba(22, 45, 120, 0.4) 0%, transparent 50%);
 }
 
 @keyframes riseAndExpand {
@@ -300,9 +311,9 @@ main {
     /* starts hidden */
     animation:
         waterDrop 1.4s cubic-bezier(0.22, 1, 0.36, 1) forwards,
-        elementBreathe 4s ease-in-out infinite alternate forwards;
-    animation-delay: 0.2s, 1.6s;
-    /* slightly delayed behind the background orbs */
+        elementBreathe 4s ease-in-out infinite alternate forwards,
+        goldShimmer 5s linear infinite;
+    animation-delay: 0.2s, 1.6s, 1.6s;
 }
 
 .btn-glass {
@@ -403,6 +414,11 @@ main {
     100% {
         scale: 1;
     }
+}
+
+@keyframes goldShimmer {
+    0%   { background-position: 100% center; }
+    100% { background-position: -200% center; }
 }
 
 /* ==========================================================================
