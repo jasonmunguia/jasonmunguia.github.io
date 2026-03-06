@@ -30,9 +30,13 @@
         off.height = SH;
         imgData = offCtx.createImageData(SW, SH);
         for (var k = 3; k < imgData.data.length; k += 4) imgData.data[k] = 255;
+        // Pre-seed so water looks alive the instant the page loads
+        var seeds = [0.15,0.30, 0.65,0.18, 0.82,0.62, 0.33,0.74, 0.50,0.44, 0.88,0.32];
+        for (var si = 0; si < seeds.length; si += 2) {
+            splash((seeds[si] * W / RES) | 0, (seeds[si+1] * H / RES) | 0, 2.2);
+        }
     }
     window.addEventListener('resize', resize);
-    // Defer first resize to after layout so dimensions are available
     requestAnimationFrame(resize);
 
     function onPointer(cx, cy) {
@@ -44,10 +48,8 @@
     window.addEventListener('touchmove',  function (e) { onPointer(e.touches[0].clientX, e.touches[0].clientY); }, { passive: true });
     window.addEventListener('mouseleave', function ()  { mx = -1; my = -1; });
 
-    // COEF: lower = slower wave propagation (more hypnotic, realistic)
-    var COEF = 0.26;
-    // DAMP close to 1.0 = waves persist a long time before fading
-    var DAMP = 0.9972;
+    var COEF = 0.40;    // faster spread so waves fill the screen quickly
+    var DAMP = 0.9970;  // high persistence — rings travel far
 
     function splash(gx, gy, str) {
         gx = gx | 0; gy = gy | 0;
@@ -116,23 +118,24 @@
                 var i = y * sw + x;
                 var h = A[i];
 
-                // Compute surface gradient for reflective shading
-                var dhx = (x > 0 && x < sw-1) ? (A[i+1]  - A[i-1])  * 2.8 : 0;
-                var dhy = (y > 0 && y < sh-1) ? (A[i+sw] - A[i-sw]) * 2.8 : 0;
+                // Surface gradient → reflective specular shading
+                var dhx = (x > 0 && x < sw-1) ? (A[i+1]  - A[i-1])  * 2.0 : 0;
+                var dhy = (y > 0 && y < sh-1) ? (A[i+sw] - A[i-sw]) * 2.0 : 0;
 
                 // Primary specular: light from upper-left
-                var s1 = Math.max(0,  dhx * 0.45 - dhy * 0.52);
-                s1 = s1 * s1 * 820;
+                var s1 = Math.max(0, dhx * 0.45 - dhy * 0.52);
+                s1 = s1 * s1 * 700;
 
-                // Secondary specular: light from right catches opposite slopes
-                var s2 = Math.max(0, -dhx * 0.28 + dhy * 0.18);
-                s2 = s2 * s2 * 320;
+                // Secondary specular: catches opposite slopes
+                var s2 = Math.max(0, -dhx * 0.28 + dhy * 0.20);
+                s2 = s2 * s2 * 280;
 
-                // Crest glow: crests are softly brighter
-                var crest = Math.max(0, h) * 10;
+                // Height mapping: crests brighter, troughs slightly darker but NEVER pure black
+                // h > 0: brighter  |  h < 0: slightly dimmer (not black)
+                var heightShift = h > 0 ? h * 10 : h * 4;
 
-                // Ambient: ensures water is always faintly visible (not an abyss)
-                var b = Math.min(255, 18 + crest + s1 + s2);
+                // Ambient 32 ensures flat water is always a visible dark grey
+                var b = Math.min(255, Math.max(0, 32 + heightShift + s1 + s2));
 
                 var p = i * 4;
                 d[p]     = b * 0.86 | 0;   // cool blue-white tint
