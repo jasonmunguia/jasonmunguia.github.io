@@ -778,11 +778,87 @@ main {
 /* ==========================================================================
    Responsive Logic
    ========================================================================== */
-@media (max-width: 768px) {
-    .nav-links {
-        display: none;
+
+/* Mobile: book fills screen, arrows overlay the cover edges */
+@media (max-width: 640px) {
+    /* Allow overlay to scroll if book is taller than screen */
+    .explore-overlay {
+        align-items: flex-start;
+        padding: 48px 0 24px;
+        overflow-y: auto;
     }
 
+    /* Wrapper fills viewport width, arrows sit absolutely on its edges */
+    .book-wrapper {
+        position: relative;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+        width: calc(100vw - 32px);
+        max-width: 420px;
+    }
+
+    /* Cover stretches to fill wrapper */
+    .book-cover {
+        padding: 10px 16px 22px 36px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .book-title {
+        font-size: 1.4rem;
+        margin-bottom: 8px;
+    }
+
+    /* Book page area fills cover width, height proportional */
+    .explore-book {
+        width: 100%;
+        height: clamp(340px, 100vw, 480px);
+    }
+
+    /* Arrows float on the left/right edges of the wrapper */
+    .explore-arrow {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 20;
+        width: 36px;
+        height: 36px;
+        font-size: 1.3rem;
+        background: rgba(0, 0, 0, 0.5);
+        border-color: rgba(255, 255, 255, 0.25);
+        color: rgba(255, 255, 255, 0.9);
+    }
+
+    .explore-arrow-left {
+        left: -14px;
+        visibility: hidden;
+    }
+
+    .explore-arrow-right {
+        right: -14px;
+    }
+
+    .explore-arrow:hover {
+        transform: translateY(-50%) scale(1.1);
+    }
+
+    /* Close button stays top-right */
+    .explore-close {
+        top: 12px;
+        right: 12px;
+    }
+
+    /* Contact card fits mobile screen */
+    .contact-card {
+        padding: 28px 24px 24px;
+        min-width: unset;
+        width: calc(100vw - 48px);
+        max-width: 340px;
+    }
+}
+
+@media (max-width: 768px) {
     .hero-visual {
         width: 100vw;
         height: 100vw;
