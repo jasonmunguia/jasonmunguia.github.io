@@ -18,10 +18,12 @@
     var mx = -1, my = -1;
 
     function resize() {
-        W  = canvas.width  = canvas.offsetWidth;
-        H  = canvas.height = canvas.offsetHeight;
+        // Use viewport dimensions — offsetWidth can be 0 before CSS layout completes
+        W  = canvas.width  = window.innerWidth;
+        H  = canvas.height = window.innerHeight;
         SW = Math.ceil(W / RES);
         SH = Math.ceil(H / RES);
+        if (SW < 2 || SH < 2) return;  // guard against zero-size crash
         A  = new Float32Array(SW * SH);
         B  = new Float32Array(SW * SH);
         off.width  = SW;
@@ -29,8 +31,9 @@
         imgData = offCtx.createImageData(SW, SH);
         for (var k = 3; k < imgData.data.length; k += 4) imgData.data[k] = 255;
     }
-    resize();
     window.addEventListener('resize', resize);
+    // Defer first resize to after layout so dimensions are available
+    requestAnimationFrame(resize);
 
     function onPointer(cx, cy) {
         var r = canvas.getBoundingClientRect();
@@ -146,7 +149,8 @@
     }
 
     function frame() {
-        step();   // 1 step per frame = slow, natural wave movement
+        if (!imgData) { requestAnimationFrame(frame); return; }
+        step();
         render();
         requestAnimationFrame(frame);
     }
