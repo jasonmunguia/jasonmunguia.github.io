@@ -28,6 +28,11 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+button, a {
+    touch-action: manipulation;
 }
 
 html {
@@ -182,6 +187,7 @@ main {
     height: 100%;
     z-index: 0;
     display: block;
+    pointer-events: none;
 }
 
 /* Deep vignette for black aura */
@@ -1041,8 +1047,21 @@ main {
     transition: transform 0.3s var(--ease-out-expo), border-color 0.3s ease;
 }
 
-.bento-card:hover {
-    transform: translateY(-4px);
+@media (hover: hover) {
+    .bento-card:hover {
+        transform: translateY(-4px);
+    }
+}
+
+/* Remove focus outline square on touch/tap */
+.bento-card *:focus:not(:focus-visible) {
+    outline: none;
+}
+
+.bento-card *:focus-visible {
+    outline: 2px solid rgba(255,255,255,0.25);
+    outline-offset: 3px;
+    border-radius: 4px;
 }
 
 /* Colored glow blob per card (bottom-right) */
@@ -1059,7 +1078,7 @@ main {
     transition: opacity 0.3s ease;
 }
 
-.bento-card:hover .bento-glow { opacity: 0.5; }
+@media (hover: hover) { .bento-card:hover .bento-glow { opacity: 0.5; } }
 
 .bento-email .bento-glow    { background: #ff9a44; }
 .bento-climbing .bento-glow { background: #00f2fe; }

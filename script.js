@@ -1,14 +1,49 @@
 // ============================================================
-// Black Water Canvas — animated waves + mouse ripples
+// Black Water Canvas — interference ripple pattern (pixel-based)
 // ============================================================
 (function () {
     var canvas = document.getElementById('water-canvas');
     if (!canvas) return;
     var ctx = canvas.getContext('2d');
     var W = 0, H = 0;
-    var mx = -9999, my = -9999;
     var t = 0;
-    var ripples = [];
+
+    // Offscreen canvas rendered at 1/RES resolution then scaled up for smooth blur
+    var off = document.createElement('canvas');
+    var offCtx = off.getContext('2d');
+    var RES = 4;
+
+    // Fixed interference sources — scattered across canvas (relative coords)
+    var sources = [
+        { xr: 0.12, yr: 0.28, f: 0.038, spd: 1.10, ph: 0.0,  dk: 0.0030 },
+        { xr: 0.65, yr: 0.14, f: 0.041, spd: 0.85,  ph: 2.1,  dk: 0.0026 },
+        { xr: 0.82, yr: 0.60, f: 0.036, spd: 1.30,  ph: 4.2,  dk: 0.0028 },
+        { xr: 0.30, yr: 0.76, f: 0.043, spd: 0.95,  ph: 1.0,  dk: 0.0025 },
+        { xr: 0.50, yr: 0.40, f: 0.046, spd: 1.15,  ph: 3.5,  dk: 0.0022 },
+        { xr: 0.08, yr: 0.82, f: 0.037, spd: 0.78,  ph: 5.8,  dk: 0.0030 },
+        { xr: 0.45, yr: 0.18, f: 0.040, spd: 1.05,  ph: 0.7,  dk: 0.0027 },
+        { xr: 0.72, yr: 0.88, f: 0.034, spd: 1.20,  ph: 3.0,  dk: 0.0029 },
+    ];
+
+    // Mouse/touch-driven ripple sources
+    var mRipples = [];
+    var lastX = -1, lastY = -1;
+
+    function addRipple(cx, cy) {
+        if (mRipples.length >= 14) return;
+        if (Math.abs(cx - lastX) < 8 && Math.abs(cy - lastY) < 8) return;
+        mRipples.push({ x: cx, y: cy, age: 0, f: 0.055, spd: 3.2 });
+        lastX = cx; lastY = cy;
+    }
+
+    window.addEventListener('mousemove', function (e) {
+        var r = canvas.getBoundingClientRect();
+        addRipple(e.clientX - r.left, e.clientY - r.top);
+    });
+    window.addEventListener('touchmove', function (e) {
+        var r = canvas.getBoundingClientRect();
+        addRipple(e.touches[0].clientX - r.left, e.touches[0].clientY - r.top);
+    }, { passive: true });
 
     function resize() {
         W = canvas.width = canvas.offsetWidth;
@@ -17,67 +52,67 @@
     resize();
     window.addEventListener('resize', resize);
 
-    window.addEventListener('mousemove', function (e) {
-        var rect = canvas.getBoundingClientRect();
-        mx = e.clientX - rect.left;
-        my = e.clientY - rect.top;
-        if (ripples.length < 10) {
-            ripples.push({ x: mx, y: my, r: 2, maxR: 100, spd: 1.8 });
-        }
-    });
-
-    // Wave layers: gap=row spacing, amp=height, f=frequency, spd=anim speed, opa=opacity, lw=lineWidth
-    var layers = [
-        { gap: 34, amp: 8,  f: 0.013, spd: 0.22, opa: 0.22, lw: 0.8 },
-        { gap: 56, amp: 14, f: 0.008, spd: 0.14, opa: 0.13, lw: 0.7 },
-        { gap: 82, amp: 5,  f: 0.019, spd: 0.34, opa: 0.07, lw: 0.5 },
-        { gap: 18, amp: 3,  f: 0.024, spd: 0.48, opa: 0.09, lw: 0.4 },
-    ];
-
-    function drawLayer(l, time) {
-        ctx.lineWidth = l.lw;
-        ctx.strokeStyle = 'rgba(255,255,255,' + l.opa + ')';
-        for (var baseY = 0; baseY <= H + l.gap; baseY += l.gap) {
-            ctx.beginPath();
-            var started = false;
-            for (var x = 0; x <= W; x += 4) {
-                var dx = x - mx;
-                var dy = baseY - my;
-                var dist = Math.sqrt(dx * dx + dy * dy);
-                var pull = dist < 170
-                    ? (1 - dist / 170) * 28 * Math.sin(dist * 0.07 - time * 5)
-                    : 0;
-                var y = baseY
-                    + Math.sin(x * l.f + time * l.spd) * l.amp
-                    + Math.sin(x * l.f * 1.7 - time * l.spd * 0.55) * l.amp * 0.38
-                    + pull;
-                if (!started) { ctx.moveTo(x, y); started = true; }
-                else ctx.lineTo(x, y);
-            }
-            ctx.stroke();
-        }
-    }
-
-    function drawRipples() {
-        for (var i = ripples.length - 1; i >= 0; i--) {
-            var rp = ripples[i];
-            rp.r += rp.spd;
-            var life = 1 - rp.r / rp.maxR;
-            if (life <= 0) { ripples.splice(i, 1); continue; }
-            ctx.beginPath();
-            ctx.arc(rp.x, rp.y, rp.r, 0, Math.PI * 2);
-            ctx.strokeStyle = 'rgba(255,255,255,' + (life * 0.28) + ')';
-            ctx.lineWidth = 0.7;
-            ctx.stroke();
-        }
-    }
-
     function frame() {
-        t += 0.012;
-        ctx.fillStyle = '#030608';
+        t += 0.015;
+
+        // Age out ripples
+        for (var ri = mRipples.length - 1; ri >= 0; ri--) {
+            mRipples[ri].age++;
+            if (mRipples[ri].age > 90) mRipples.splice(ri, 1);
+        }
+
+        var sw = Math.ceil(W / RES);
+        var sh = Math.ceil(H / RES);
+        if (off.width !== sw) off.width = sw;
+        if (off.height !== sh) off.height = sh;
+
+        var imageData = offCtx.createImageData(sw, sh);
+        var d = imageData.data;
+
+        for (var py = 0; py < sh; py++) {
+            for (var px = 0; px < sw; px++) {
+                var wx = px * RES;
+                var wy = py * RES;
+                var h = 0;
+
+                // Fixed sources
+                for (var si = 0; si < sources.length; si++) {
+                    var s = sources[si];
+                    var dx = wx - s.xr * W;
+                    var dy = wy - s.yr * H;
+                    var dist = Math.sqrt(dx * dx + dy * dy);
+                    h += Math.sin(dist * s.f - t * s.spd + s.ph) * Math.exp(-dist * s.dk);
+                }
+
+                // Mouse ripples
+                for (var mi = 0; mi < mRipples.length; mi++) {
+                    var mr = mRipples[mi];
+                    var mdx = wx - mr.x;
+                    var mdy = wy - mr.y;
+                    var mdist = Math.sqrt(mdx * mdx + mdy * mdy);
+                    var mlife = 1 - mr.age / 90;
+                    h += Math.sin(mdist * mr.f - t * mr.spd) * Math.exp(-mdist * 0.009) * mlife * 1.6;
+                }
+
+                // Map: only highlight bright crests, troughs stay black
+                var norm = Math.max(0, Math.min(1, (h + 2) / 4));
+                var b = Math.pow(Math.max(0, norm - 0.52) / 0.48, 2.0) * 255;
+
+                var idx = (py * sw + px) * 4;
+                d[idx]   = Math.round(b * 0.86);  // slight cool tint
+                d[idx+1] = Math.round(b * 0.92);
+                d[idx+2] = Math.round(b);
+                d[idx+3] = 255;
+            }
+        }
+
+        offCtx.putImageData(imageData, 0, 0);
+        ctx.fillStyle = '#020405';
         ctx.fillRect(0, 0, W, H);
-        layers.forEach(function (l) { drawLayer(l, t); });
-        drawRipples();
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        ctx.drawImage(off, 0, 0, W, H);
+
         requestAnimationFrame(frame);
     }
     requestAnimationFrame(frame);
