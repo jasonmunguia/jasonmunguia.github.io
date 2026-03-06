@@ -1,4 +1,89 @@
 // ============================================================
+// Black Water Canvas — animated waves + mouse ripples
+// ============================================================
+(function () {
+    var canvas = document.getElementById('water-canvas');
+    if (!canvas) return;
+    var ctx = canvas.getContext('2d');
+    var W = 0, H = 0;
+    var mx = -9999, my = -9999;
+    var t = 0;
+    var ripples = [];
+
+    function resize() {
+        W = canvas.width = canvas.offsetWidth;
+        H = canvas.height = canvas.offsetHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    window.addEventListener('mousemove', function (e) {
+        var rect = canvas.getBoundingClientRect();
+        mx = e.clientX - rect.left;
+        my = e.clientY - rect.top;
+        if (ripples.length < 10) {
+            ripples.push({ x: mx, y: my, r: 2, maxR: 100, spd: 1.8 });
+        }
+    });
+
+    // Wave layers: gap=row spacing, amp=height, f=frequency, spd=anim speed, opa=opacity, lw=lineWidth
+    var layers = [
+        { gap: 34, amp: 8,  f: 0.013, spd: 0.22, opa: 0.22, lw: 0.8 },
+        { gap: 56, amp: 14, f: 0.008, spd: 0.14, opa: 0.13, lw: 0.7 },
+        { gap: 82, amp: 5,  f: 0.019, spd: 0.34, opa: 0.07, lw: 0.5 },
+        { gap: 18, amp: 3,  f: 0.024, spd: 0.48, opa: 0.09, lw: 0.4 },
+    ];
+
+    function drawLayer(l, time) {
+        ctx.lineWidth = l.lw;
+        ctx.strokeStyle = 'rgba(255,255,255,' + l.opa + ')';
+        for (var baseY = 0; baseY <= H + l.gap; baseY += l.gap) {
+            ctx.beginPath();
+            var started = false;
+            for (var x = 0; x <= W; x += 4) {
+                var dx = x - mx;
+                var dy = baseY - my;
+                var dist = Math.sqrt(dx * dx + dy * dy);
+                var pull = dist < 170
+                    ? (1 - dist / 170) * 28 * Math.sin(dist * 0.07 - time * 5)
+                    : 0;
+                var y = baseY
+                    + Math.sin(x * l.f + time * l.spd) * l.amp
+                    + Math.sin(x * l.f * 1.7 - time * l.spd * 0.55) * l.amp * 0.38
+                    + pull;
+                if (!started) { ctx.moveTo(x, y); started = true; }
+                else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+        }
+    }
+
+    function drawRipples() {
+        for (var i = ripples.length - 1; i >= 0; i--) {
+            var rp = ripples[i];
+            rp.r += rp.spd;
+            var life = 1 - rp.r / rp.maxR;
+            if (life <= 0) { ripples.splice(i, 1); continue; }
+            ctx.beginPath();
+            ctx.arc(rp.x, rp.y, rp.r, 0, Math.PI * 2);
+            ctx.strokeStyle = 'rgba(255,255,255,' + (life * 0.28) + ')';
+            ctx.lineWidth = 0.7;
+            ctx.stroke();
+        }
+    }
+
+    function frame() {
+        t += 0.012;
+        ctx.fillStyle = '#030608';
+        ctx.fillRect(0, 0, W, H);
+        layers.forEach(function (l) { drawLayer(l, t); });
+        drawRipples();
+        requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+})();
+
+// ============================================================
 // Gift Audio Button
 // ============================================================
 (function () {
