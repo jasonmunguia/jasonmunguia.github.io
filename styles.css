@@ -717,7 +717,7 @@ main {
 .explore-book {
     position: relative;
     width: 400px;
-    height: 500px;
+    height: 820px;
     perspective: 1200px;
 }
 
@@ -819,7 +819,7 @@ main {
 /* Image Placeholder — top 35% of the card */
 .page-image-placeholder {
     flex: 0 0 auto;
-    height: calc(35% + 60px);
+    height: 235px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -849,7 +849,22 @@ main {
     font-size: 0.9rem;
     color: #2c1a0e;
     line-height: 1.6;
-    overflow: hidden;
+    overflow-y: auto;
+}
+
+/* Hyperlinks inside book pages */
+.page-link {
+    color: #7d4b2a;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    text-decoration-color: rgba(125, 75, 42, 0.5);
+    font-weight: 500;
+    transition: color 0.15s;
+}
+
+.page-link:hover {
+    color: #4e2a0f;
+    text-decoration-color: #4e2a0f;
 }
 
 /* Typewriter cursor */
@@ -1561,7 +1576,7 @@ main {
     /* Book page area fills cover width, height proportional */
     .explore-book {
         width: 100%;
-        height: clamp(340px, 100vw, 480px);
+        height: clamp(600px, 200vw, 820px);
     }
 
     /* Arrows float on the left/right edges of the wrapper */

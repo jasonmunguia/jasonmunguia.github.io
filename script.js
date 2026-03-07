@@ -263,6 +263,20 @@
                 cursor.insertAdjacentText('beforebegin', text[i]);
                 i++;
                 typewriterTimer = setTimeout(tick, speed);
+            } else {
+                // After typing completes, apply any embedded hyperlinks
+                const linksJson = el.dataset.links;
+                if (linksJson) {
+                    try {
+                        const links = JSON.parse(linksJson);
+                        cursor.remove();
+                        let html = el.textContent;
+                        Object.keys(links).forEach(function (word) {
+                            html = html.replace(word, '<a href="' + links[word] + '" target="_blank" rel="noopener noreferrer" class="page-link">' + word + '</a>');
+                        });
+                        el.innerHTML = html;
+                    } catch (e) { /* malformed JSON — leave as-is */ }
+                }
             }
         }
         typewriterTimer = setTimeout(tick, 120); // slight delay after flip
