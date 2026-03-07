@@ -48,7 +48,7 @@ body {
 }
 
 body {
-    background-color: var(--clr-bg);
+    background-color: #020406; /* matches canvas fill — visible in gaps before canvas paints */
     color: var(--clr-text);
     font-family: var(--font-body);
     -webkit-font-smoothing: antialiased;
@@ -179,13 +179,13 @@ main {
     overflow: hidden;
 }
 
-/* Water canvas */
+/* Water canvas: fixed behind the entire page */
 #water-canvas {
-    position: absolute;
+    position: fixed;
     inset: 0;
     width: 100%;
     height: 100%;
-    z-index: 0;
+    z-index: -1;
     display: block;
     pointer-events: none;
 }
@@ -1031,10 +1031,10 @@ main {
     min-height: 50vh;
     padding: 64px var(--spacing-lg) 80px;
     position: relative;
-    /* Background fix: continue the hero glow into this section */
+    /* Semi-transparent so the fixed water canvas shows through */
     background:
-        radial-gradient(ellipse 70% 360px at 50% 0%, rgba(30, 58, 138, 0.28) 0%, transparent 100%),
-        var(--clr-bg);
+        radial-gradient(ellipse 70% 360px at 50% 0%, rgba(30, 58, 138, 0.18) 0%, transparent 100%),
+        rgba(2, 4, 6, 0.50);
 }
 
 .interests-title {
