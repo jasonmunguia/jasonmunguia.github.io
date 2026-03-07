@@ -197,12 +197,12 @@ main {
     position: absolute;
     inset: 0;
     background:
-        /* Side + top darkness — softened */
-        radial-gradient(ellipse 70% 50% at 50% 38%, transparent 30%, rgba(0,0,0,0.55) 100%),
-        /* Bottom fade: longer, softer transition to transparent */
-        linear-gradient(to bottom, transparent 50%, rgba(2,4,6,0.60) 72%, rgba(2,4,6,0) 100%);
-    /* Extend further below so the fade never clips hard */
-    bottom: -120px;
+        /* Very light edge vignette — barely perceptible, lets canvas breathe */
+        radial-gradient(ellipse 80% 60% at 50% 38%, transparent 40%, rgba(0,0,0,0.18) 100%),
+        /* Very gradual bottom fade */
+        linear-gradient(to bottom, transparent 45%, rgba(2,4,6,0.28) 70%, rgba(2,4,6,0) 100%);
+    /* Extend well below so the fade never clips hard */
+    bottom: -160px;
     z-index: 1;
     pointer-events: none;
 }
@@ -231,25 +231,27 @@ main {
     background: linear-gradient(
         to bottom,
         #ffffff 0%,
-        #e8e8e8 12%,
-        #c8c8c8 30%,
-        #a0a0a0 55%,
-        #b8b8b8 75%,
-        #888888 100%
+        #f0f0f0 10%,
+        #d0d0d0 28%,
+        #909090 55%,
+        #aaaaaa 75%,
+        #666666 100%
     );
     background-size: 100% 100%;
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    /* Convex glass depth: top-left specular + depth stack */
+    /* Deep convex glass extrusion: bright specular top-left + 6-layer depth stack */
     filter:
-        drop-shadow(-1px -1px 0px rgba(255,255,255,0.85))
-        drop-shadow(0px -2px 2px rgba(255,255,255,0.30))
+        drop-shadow(-2px -2px 0px rgba(255,255,255,0.90))
+        drop-shadow(0px -3px 4px rgba(255,255,255,0.40))
         drop-shadow(1px 1px 0px rgba(0,0,0,1))
-        drop-shadow(2px 2px 0px rgba(0,0,0,0.9))
-        drop-shadow(3px 3px 0px rgba(0,0,0,0.8))
-        drop-shadow(4px 4px 10px rgba(0,0,0,0.65))
-        drop-shadow(0 0 40px rgba(160,210,255,0.18));
+        drop-shadow(2px 2px 0px rgba(0,0,0,1))
+        drop-shadow(3px 3px 0px rgba(0,0,0,0.95))
+        drop-shadow(4px 4px 0px rgba(0,0,0,0.90))
+        drop-shadow(5px 5px 0px rgba(0,0,0,0.80))
+        drop-shadow(6px 6px 14px rgba(0,0,0,0.70))
+        drop-shadow(0 0 50px rgba(160,210,255,0.20));
 }
 
 .cta-group {
@@ -275,17 +277,18 @@ main {
     border: 1px solid rgba(255,255,255,0.42);
     backdrop-filter: blur(24px);
     -webkit-backdrop-filter: blur(24px);
-    /* 3D tilt: top face visible, button leans toward viewer */
-    transform: perspective(400px) rotateX(6deg);
+    /* 3D tilt: steeper angle so top face is more visible */
+    transform: perspective(350px) rotateX(12deg);
     box-shadow:
-        inset 0 3px 0 rgba(255,255,255,0.80),
-        inset 0 -3px 6px rgba(0,0,0,0.45),
-        inset 0 8px 22px rgba(255,255,255,0.12),
-        inset 1px 0 0 rgba(255,255,255,0.22),
-        inset -1px 0 0 rgba(255,255,255,0.22),
-        0 10px 0 rgba(0,0,0,0.60),
-        0 13px 5px rgba(0,0,0,0.35),
-        0 20px 55px rgba(0,0,0,0.70);
+        inset 0 3px 0 rgba(255,255,255,0.88),
+        inset 0 -4px 8px rgba(0,0,0,0.55),
+        inset 0 10px 28px rgba(255,255,255,0.14),
+        inset 1px 0 0 rgba(255,255,255,0.28),
+        inset -1px 0 0 rgba(255,255,255,0.28),
+        0 12px 0 rgba(0,0,0,0.70),
+        0 14px 0 rgba(0,0,0,0.50),
+        0 16px 6px rgba(0,0,0,0.40),
+        0 24px 60px rgba(0,0,0,0.75);
 }
 
 .btn-glass:hover {
@@ -310,11 +313,11 @@ main {
     background: linear-gradient(
         to bottom,
         #ffffff 0%,
-        #e8e8e8 12%,
-        #c8c8c8 30%,
-        #a0a0a0 55%,
-        #b8b8b8 75%,
-        #888888 100%
+        #f0f0f0 10%,
+        #d0d0d0 28%,
+        #909090 55%,
+        #aaaaaa 75%,
+        #666666 100%
     );
     background-size: 100% 100%;
     -webkit-background-clip: text;
@@ -322,13 +325,15 @@ main {
     -webkit-text-fill-color: transparent;
     display: inline-block;
     filter:
-        drop-shadow(-1px -1px 0px rgba(255,255,255,0.85))
-        drop-shadow(0px -2px 2px rgba(255,255,255,0.30))
+        drop-shadow(-2px -2px 0px rgba(255,255,255,0.90))
+        drop-shadow(0px -3px 4px rgba(255,255,255,0.40))
         drop-shadow(1px 1px 0px rgba(0,0,0,1))
-        drop-shadow(2px 2px 0px rgba(0,0,0,0.9))
-        drop-shadow(3px 3px 0px rgba(0,0,0,0.8))
-        drop-shadow(4px 4px 10px rgba(0,0,0,0.65))
-        drop-shadow(0 0 40px rgba(160,210,255,0.18));
+        drop-shadow(2px 2px 0px rgba(0,0,0,1))
+        drop-shadow(3px 3px 0px rgba(0,0,0,0.95))
+        drop-shadow(4px 4px 0px rgba(0,0,0,0.90))
+        drop-shadow(5px 5px 0px rgba(0,0,0,0.80))
+        drop-shadow(6px 6px 14px rgba(0,0,0,0.70))
+        drop-shadow(0 0 50px rgba(160,210,255,0.20));
 }
 
 /* Gift button */
@@ -352,13 +357,14 @@ main {
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     box-shadow:
-        inset 0 3px 0 rgba(255,255,255,0.78),
-        inset 0 -3px 5px rgba(0,0,0,0.42),
-        inset 0 7px 18px rgba(255,255,255,0.10),
-        0 8px 0 rgba(0,0,0,0.56),
-        0 10px 4px rgba(0,0,0,0.32),
-        0 16px 40px rgba(0,0,0,0.65);
-    transform: perspective(400px) rotateX(6deg);
+        inset 0 3px 0 rgba(255,255,255,0.85),
+        inset 0 -3px 7px rgba(0,0,0,0.50),
+        inset 0 8px 20px rgba(255,255,255,0.12),
+        0 10px 0 rgba(0,0,0,0.65),
+        0 12px 0 rgba(0,0,0,0.45),
+        0 14px 5px rgba(0,0,0,0.38),
+        0 20px 45px rgba(0,0,0,0.70);
+    transform: perspective(350px) rotateX(12deg);
     transition: all 0.3s var(--ease-out-expo);
     opacity: 0;
     animation: buttonEntrance 1.4s cubic-bezier(0.22, 1, 0.36, 1) 0.4s forwards;
@@ -393,11 +399,11 @@ main {
     background: linear-gradient(
         to bottom,
         #ffffff 0%,
-        #e8e8e8 12%,
-        #c8c8c8 30%,
-        #a0a0a0 55%,
-        #b8b8b8 75%,
-        #888888 100%
+        #f0f0f0 10%,
+        #d0d0d0 28%,
+        #909090 55%,
+        #aaaaaa 75%,
+        #666666 100%
     );
     background-size: 100% 100%;
     -webkit-background-clip: text;
@@ -405,11 +411,12 @@ main {
     -webkit-text-fill-color: transparent;
     display: inline-block;
     filter:
-        drop-shadow(-1px -1px 0px rgba(255,255,255,0.85))
-        drop-shadow(0px -1px 2px rgba(255,255,255,0.30))
+        drop-shadow(-1px -1px 0px rgba(255,255,255,0.90))
+        drop-shadow(0px -2px 3px rgba(255,255,255,0.35))
         drop-shadow(1px 1px 0px rgba(0,0,0,1))
-        drop-shadow(2px 2px 0px rgba(0,0,0,0.85))
-        drop-shadow(3px 3px 6px rgba(0,0,0,0.6));
+        drop-shadow(2px 2px 0px rgba(0,0,0,1))
+        drop-shadow(3px 3px 0px rgba(0,0,0,0.90))
+        drop-shadow(4px 4px 8px rgba(0,0,0,0.65));
 }
 
 .gift-status {
@@ -506,7 +513,7 @@ main {
 
 @keyframes heroFadeIn {
     from { opacity: 0; }
-    to   { opacity: 1; }
+    to   { opacity: 0.35; }
 }
 
 .btn-glass {
@@ -588,18 +595,18 @@ main {
 
     40% {
         scale: 0.85;
-        opacity: 1;
+        opacity: 0.35;
     }
 
     70% {
         scale: 1.08;
-        opacity: 1;
+        opacity: 0.35;
     }
 
     100% {
         scale: 1;
         rotate: 0deg;
-        opacity: 1;
+        opacity: 0.35;
     }
 }
 
@@ -1045,7 +1052,7 @@ main {
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(to bottom, rgba(2,4,6,0.25) 0%, transparent 18%);
+    background: linear-gradient(to bottom, rgba(2,4,6,0.18) 0%, transparent 25%);
     pointer-events: none;
     z-index: 0;
 }
@@ -1067,24 +1074,27 @@ main {
     background: linear-gradient(
         to bottom,
         #ffffff 0%,
-        #e8e8e8 12%,
-        #c8c8c8 30%,
-        #a0a0a0 55%,
-        #b8b8b8 75%,
-        #888888 100%
+        #f0f0f0 10%,
+        #d0d0d0 28%,
+        #909090 55%,
+        #aaaaaa 75%,
+        #666666 100%
     );
     background-size: 100% 100%;
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
+    opacity: 0.35;
     filter:
-        drop-shadow(-1px -1px 0px rgba(255,255,255,0.85))
-        drop-shadow(0px -2px 2px rgba(255,255,255,0.30))
+        drop-shadow(-2px -2px 0px rgba(255,255,255,0.90))
+        drop-shadow(0px -3px 4px rgba(255,255,255,0.40))
         drop-shadow(1px 1px 0px rgba(0,0,0,1))
-        drop-shadow(2px 2px 0px rgba(0,0,0,0.9))
-        drop-shadow(3px 3px 0px rgba(0,0,0,0.8))
-        drop-shadow(4px 4px 10px rgba(0,0,0,0.65))
-        drop-shadow(0 0 40px rgba(160,210,255,0.18));
+        drop-shadow(2px 2px 0px rgba(0,0,0,1))
+        drop-shadow(3px 3px 0px rgba(0,0,0,0.95))
+        drop-shadow(4px 4px 0px rgba(0,0,0,0.90))
+        drop-shadow(5px 5px 0px rgba(0,0,0,0.80))
+        drop-shadow(6px 6px 14px rgba(0,0,0,0.70))
+        drop-shadow(0 0 50px rgba(160,210,255,0.20));
 }
 
 /* ==========================================================================
