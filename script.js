@@ -1,5 +1,5 @@
 // ============================================================
-// Black Water Canvas — realistic wave simulation with specular shading
+// Black Water Canvas — realistic ripple simulation with specular shading
 // ============================================================
 (function () {
     var canvas = document.getElementById('water-canvas');
@@ -7,33 +7,36 @@
     var ctx = canvas.getContext('2d');
     var W = 0, H = 0;
 
-    var RES = 3;        // grid resolution: lower = finer waves
+    // RES=3: simulation grid 1/3 of screen, scaled up smoothly
+    var RES = 3;
     var SW = 0, SH = 0;
-    var A, B;           // double-buffered height fields
+    // A = current frame, B = previous frame (classic double-buffer wave eq)
+    var A, B;
 
     var off = document.createElement('canvas');
     var offCtx = off.getContext('2d');
     var imgData;
 
-    var mx = -1, my = -1;
+    // Mouse state — track velocity so we only splash on movement
+    var mx = -1, my = -1, pmx = -1, pmy = -1;
 
     function resize() {
-        // Use viewport dimensions — offsetWidth can be 0 before CSS layout completes
         W  = canvas.width  = window.innerWidth;
         H  = canvas.height = window.innerHeight;
         SW = Math.ceil(W / RES);
         SH = Math.ceil(H / RES);
-        if (SW < 2 || SH < 2) return;  // guard against zero-size crash
-        A  = new Float32Array(SW * SH);
-        B  = new Float32Array(SW * SH);
+        if (SW < 2 || SH < 2) return;
+        A = new Float32Array(SW * SH);
+        B = new Float32Array(SW * SH);
         off.width  = SW;
         off.height = SH;
         imgData = offCtx.createImageData(SW, SH);
         for (var k = 3; k < imgData.data.length; k += 4) imgData.data[k] = 255;
-        // Pre-seed so water looks alive the instant the page loads
-        var seeds = [0.15,0.30, 0.65,0.18, 0.82,0.62, 0.33,0.74, 0.50,0.44, 0.88,0.32];
+        // Pre-seed several points so rings are visible the instant page loads
+        var seeds = [0.18,0.28, 0.63,0.16, 0.83,0.64, 0.36,0.77,
+                     0.52,0.43, 0.77,0.33, 0.24,0.57, 0.46,0.88];
         for (var si = 0; si < seeds.length; si += 2) {
-            splash((seeds[si] * W / RES) | 0, (seeds[si+1] * H / RES) | 0, 2.2);
+            splash((seeds[si] * SW) | 0, (seeds[si+1] * SH) | 0, 2.8);
         }
     }
     window.addEventListener('resize', resize);
@@ -41,19 +44,29 @@
 
     function onPointer(cx, cy) {
         var r = canvas.getBoundingClientRect();
-        mx = ((cx - r.left) / RES) | 0;
-        my = ((cy - r.top)  / RES) | 0;
+        var nx = ((cx - r.left) / RES) | 0;
+        var ny = ((cy - r.top)  / RES) | 0;
+        // Only create waves when cursor is actually moving
+        if (pmx >= 0 && SW > 0) {
+            var dx = nx - pmx, dy = ny - pmy;
+            var spd = Math.sqrt(dx * dx + dy * dy);
+            if (spd > 0.8) splash(nx, ny, Math.min(spd * 0.5, 4.5));
+        }
+        pmx = mx = nx;
+        pmy = my = ny;
     }
     window.addEventListener('mousemove',  function (e) { onPointer(e.clientX, e.clientY); });
     window.addEventListener('touchmove',  function (e) { onPointer(e.touches[0].clientX, e.touches[0].clientY); }, { passive: true });
-    window.addEventListener('mouseleave', function ()  { mx = -1; my = -1; });
+    window.addEventListener('mouseleave', function ()  { mx = pmx = -1; my = pmy = -1; });
 
-    var COEF = 0.37;    // wave spread speed — below 0.5 for stability
-    var DAMP = 0.9965;  // slight damping so old rings fade, new ones visible
+    // COEF = 0.47: near maximum propagation → rings spread fully across screen
+    // DAMP = 0.992: moderate fade so many rings overlap without saturation
+    var COEF = 0.47;
+    var DAMP = 0.9920;
 
     function splash(gx, gy, str) {
         gx = gx | 0; gy = gy | 0;
-        var r = 3;
+        var r = 4;
         for (var dy = -r; dy <= r; dy++) {
             for (var dx = -r; dx <= r; dx++) {
                 var nx = gx + dx, ny = gy + dy;
@@ -65,83 +78,71 @@
         }
     }
 
-    // 6 persistent gentle emitters keep the surface alive at all times
+    // 7 ambient emitters keep the surface alive with slow, organic ripples
     var emitters = [
-        { xr: 0.14, yr: 0.26, amp: 1.8, ms: 2100 },
-        { xr: 0.70, yr: 0.18, amp: 1.6, ms: 2400 },
-        { xr: 0.85, yr: 0.64, amp: 1.9, ms: 1900 },
-        { xr: 0.28, yr: 0.72, amp: 1.7, ms: 2300 },
-        { xr: 0.50, yr: 0.44, amp: 1.5, ms: 2600 },
-        { xr: 0.90, yr: 0.32, amp: 1.6, ms: 2000 },
+        { xr: 0.13, yr: 0.23, amp: 1.6, ms: 3100 },
+        { xr: 0.73, yr: 0.17, amp: 1.4, ms: 3400 },
+        { xr: 0.86, yr: 0.66, amp: 1.7, ms: 2900 },
+        { xr: 0.29, yr: 0.78, amp: 1.5, ms: 3200 },
+        { xr: 0.51, yr: 0.44, amp: 1.3, ms: 3600 },
+        { xr: 0.21, yr: 0.54, amp: 1.5, ms: 3000 },
+        { xr: 0.67, yr: 0.83, amp: 1.6, ms: 3300 },
     ];
     emitters.forEach(function (e, idx) {
         setTimeout(function fire() {
-            splash((e.xr * W / RES) | 0, (e.yr * H / RES) | 0, e.amp);
+            if (SW > 0) splash((e.xr * SW) | 0, (e.yr * SH) | 0, e.amp);
             setTimeout(fire, e.ms);
-        }, idx * 380);
+        }, idx * 480);
     });
 
-    // One slow heavy raindrop every 4 seconds
+    // One raindrop every 5 seconds
     setInterval(function () {
-        splash(
-            (1 + Math.random() * (SW - 2)) | 0,
-            (1 + Math.random() * (SH - 2)) | 0,
-            3.2
-        );
-    }, 4000);
+        if (SW > 0)
+            splash((1 + Math.random() * (SW - 2)) | 0, (1 + Math.random() * (SH - 2)) | 0, 3.2);
+    }, 5000);
 
     function step() {
-        if (mx > 1 && mx < SW - 2 && my > 1 && my < SH - 2) {
-            splash(mx, my, 3.0);
-        }
+        // Classic 2-buffer wave equation: next = (4-neighbors * COEF) - prev
+        // A = current, B = previous; result written into B, then swapped
         for (var y = 1; y < SH - 1; y++) {
             for (var x = 1; x < SW - 1; x++) {
                 var i = y * SW + x;
                 B[i] = (
-                    A[(y - 1) * SW + x] +
-                    A[(y + 1) * SW + x] +
-                    A[y * SW + (x - 1)] +
-                    A[y * SW + (x + 1)]
-                ) * COEF - A[i];
+                    A[(y-1)*SW+x] + A[(y+1)*SW+x] +
+                    A[y*SW+(x-1)] + A[y*SW+(x+1)]
+                ) * COEF - B[i];
                 B[i] *= DAMP;
             }
         }
         var tmp = A; A = B; B = tmp;
     }
 
-    // Near-black ambient — flat water should be almost invisible
-    var AMBIENT = 10;
-
     function render() {
         var d = imgData.data;
         var sw = SW, sh = SH;
-
-        for (var y = 0; y < sh; y++) {
-            for (var x = 0; x < sw; x++) {
+        for (var y = 1; y < sh - 1; y++) {
+            for (var x = 1; x < sw - 1; x++) {
                 var i = y * sw + x;
-                var h = A[i];
+                // Surface normal via finite differences
+                var dhx = A[i+1]  - A[i-1];
+                var dhy = A[i+sw] - A[i-sw];
 
-                // Surface gradient → specular shading (simulates light reflecting off slope)
-                var dhx = (x > 0 && x < sw-1) ? (A[i+1]  - A[i-1])  * 1.8 : 0;
-                var dhy = (y > 0 && y < sh-1) ? (A[i+sw] - A[i-sw]) * 1.8 : 0;
+                // Specular highlight: directional light from upper-left
+                // Slope toward light = positive dhx - dhy component
+                var s1 = dhx * 0.60 - dhy * 0.70;
+                s1 = s1 > 0 ? s1 * s1 * 380 : 0;
 
-                // Two specular lobes for organic ring-edge highlights
-                var s1 = Math.max(0, dhx * 0.50 - dhy * 0.55);
-                s1 = s1 * s1 * 620;
+                // Secondary lobe catches opposite-facing slopes (ring other edge)
+                var s2 = -dhx * 0.38 + dhy * 0.30;
+                s2 = s2 > 0 ? s2 * s2 * 150 : 0;
 
-                var s2 = Math.max(0, -dhx * 0.32 + dhy * 0.22);
-                s2 = s2 * s2 * 240;
-
-                // Height shift: crests add brightness, troughs subtract a little
-                // Clamp minimum to half-ambient so troughs never go pure black
-                var heightShift = h > 0 ? h * 11 : h * 3;
-                var b = Math.min(255, Math.max(AMBIENT >> 1, AMBIENT + heightShift + s1 + s2));
-
+                // Background is near-black; ALL brightness comes from specular only
+                var b = Math.min(255, 8 + s1 + s2);
                 var p = i * 4;
-                // Deep blue-black water tint; specular highlights pull toward white
-                d[p]     = b * 0.80 | 0;
-                d[p + 1] = b * 0.88 | 0;
-                d[p + 2] = b         | 0;
+                // Deep blue-black tint on water; pure specular becomes blue-white
+                d[p]   = b * 0.78 | 0;
+                d[p+1] = b * 0.87 | 0;
+                d[p+2] = b        | 0;
             }
         }
         offCtx.putImageData(imgData, 0, 0);
