@@ -190,12 +190,14 @@ main {
     pointer-events: none;
 }
 
-/* Deep vignette for black aura */
+/* Vignette: darkens edges but fades out toward the bottom so hero bleeds into interests */
 .hero-section::after {
     content: '';
     position: absolute;
     inset: 0;
-    background: radial-gradient(ellipse 60% 60% at 50% 46%, transparent 28%, rgba(0,0,0,0.72) 100%);
+    background:
+        radial-gradient(ellipse 60% 55% at 50% 42%, transparent 28%, rgba(0,0,0,0.65) 100%),
+        linear-gradient(to bottom, transparent 70%, rgba(2,4,6,0) 100%);
     z-index: 1;
     pointer-events: none;
 }
@@ -1031,10 +1033,8 @@ main {
     min-height: 50vh;
     padding: 64px var(--spacing-lg) 80px;
     position: relative;
-    /* Semi-transparent so the fixed water canvas shows through */
-    background:
-        radial-gradient(ellipse 70% 360px at 50% 0%, rgba(30, 58, 138, 0.18) 0%, transparent 100%),
-        rgba(2, 4, 6, 0.50);
+    /* Fully transparent — water canvas shows through seamlessly */
+    background: transparent;
 }
 
 .interests-title {
@@ -1044,10 +1044,26 @@ main {
     text-transform: uppercase;
     margin-bottom: 48px;
     text-align: center;
-    background: linear-gradient(90deg, #d5f7ff 0%, #b2dcff 40%, #ec9aff 100%);
+    /* Match hero-title: white shimmer sweep */
+    background: linear-gradient(
+        90deg,
+        #b0b0b0 0%,
+        #b0b0b0 12%,
+        #d0d0d0 22%,
+        #eeeeee 32%,
+        #ffffff 40%,
+        #ffffff 45%,
+        #eeeeee 50%,
+        #d0d0d0 58%,
+        #b0b0b0 68%,
+        #b0b0b0 82%,
+        #b0b0b0 100%
+    );
+    background-size: 320% auto;
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
+    animation: goldShimmer 5s linear infinite;
 }
 
 /* ==========================================================================
