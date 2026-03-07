@@ -50,9 +50,9 @@
             var dx = nx - pmx, dy = ny - pmy;
             var dist = Math.sqrt(dx * dx + dy * dy);
             if (dist > 0.4) {
-                // Interpolate cursor path for a smooth ripple trail
+                // Gentle interpolated trail — soft swell, not a jarring splash
                 var steps = Math.min(Math.ceil(dist / 2), 5);
-                var str = Math.min(dist * 0.38, 3.8);
+                var str = Math.min(dist * 0.16, 1.8);
                 for (var s = 1; s <= steps; s++) {
                     var t = s / steps;
                     splash((pmx + dx * t) | 0, (pmy + dy * t) | 0, str * t);
@@ -67,9 +67,9 @@
     window.addEventListener('mouseleave', function ()  { mx = pmx = -1; my = pmy = -1; });
 
     // COEF = 0.47: near maximum propagation → rings spread fully across screen
-    // DAMP = 0.992: moderate fade so many rings overlap without saturation
+    // DAMP = 0.986: slightly faster fade so cursor wake doesn't linger
     var COEF = 0.47;
-    var DAMP = 0.9920;
+    var DAMP = 0.9860;
 
     function splash(gx, gy, str) {
         gx = gx | 0; gy = gy | 0;
@@ -147,11 +147,18 @@
                 var s4 = dhx * 0.40 + dhy * 0.32;   // lower-left  (fill)
                 s4 = s4 > 0 ? s4 * s4 * 90 : 0;
 
-                // Near-black base; all brightness from specular
-                var b = Math.min(255, 8 + s1 + s2 + s3 + s4);
+                // Ambient radial gradient: simulates diffuse sky reflection
+                // Center-top of screen gets ~28 brightness, edges get ~10
+                // This makes flat water look like dark water, not a void
+                var distX = x / sw - 0.50;
+                var distY = y / sh - 0.30;
+                var ambient = 28 - (distX * distX + distY * distY) * 120;
+                if (ambient < 10) ambient = 10;
+
+                var b = Math.min(255, ambient + s1 + s2 + s3 + s4);
                 var p = i * 4;
-                d[p]   = b * 0.80 | 0;
-                d[p+1] = b * 0.90 | 0;
+                d[p]   = b * 0.82 | 0;
+                d[p+1] = b * 0.91 | 0;
                 d[p+2] = b        | 0;
             }
         }
@@ -355,6 +362,24 @@
         prevBtn.style.visibility = current === 0 ? 'hidden' : 'visible';
         nextBtn.style.visibility = current === TOTAL - 1 ? 'hidden' : 'visible';
     }
+})();
+
+// ============================================================
+// Hero Title — Typewriter effect
+// ============================================================
+(function () {
+    var el = document.querySelector('.hero-title[data-typewriter]');
+    if (!el) return;
+    var text = el.dataset.typewriter;
+    el.textContent = '';
+    var i = 0;
+    function tick() {
+        if (i < text.length) {
+            el.textContent += text[i++];
+            setTimeout(tick, 110);
+        }
+    }
+    setTimeout(tick, 500); // wait for page fade-in
 })();
 
 // ============================================================
