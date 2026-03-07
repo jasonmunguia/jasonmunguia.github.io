@@ -46,11 +46,18 @@
         var r = canvas.getBoundingClientRect();
         var nx = ((cx - r.left) / RES) | 0;
         var ny = ((cy - r.top)  / RES) | 0;
-        // Only create waves when cursor is actually moving
         if (pmx >= 0 && SW > 0) {
             var dx = nx - pmx, dy = ny - pmy;
-            var spd = Math.sqrt(dx * dx + dy * dy);
-            if (spd > 0.8) splash(nx, ny, Math.min(spd * 0.5, 4.5));
+            var dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist > 0.4) {
+                // Interpolate cursor path for a smooth ripple trail
+                var steps = Math.min(Math.ceil(dist / 2), 5);
+                var str = Math.min(dist * 0.38, 3.8);
+                for (var s = 1; s <= steps; s++) {
+                    var t = s / steps;
+                    splash((pmx + dx * t) | 0, (pmy + dy * t) | 0, str * t);
+                }
+            }
         }
         pmx = mx = nx;
         pmy = my = ny;
@@ -123,25 +130,28 @@
         for (var y = 1; y < sh - 1; y++) {
             for (var x = 1; x < sw - 1; x++) {
                 var i = y * sw + x;
-                // Surface normal via finite differences
                 var dhx = A[i+1]  - A[i-1];
                 var dhy = A[i+sw] - A[i-sw];
 
-                // Specular highlight: directional light from upper-left
-                // Slope toward light = positive dhx - dhy component
-                var s1 = dhx * 0.60 - dhy * 0.70;
-                s1 = s1 > 0 ? s1 * s1 * 380 : 0;
+                // 4 directional specular lobes so water shimmers from all angles —
+                // rings are visible regardless of which way they travel
+                var s1 = dhx * 0.62 - dhy * 0.72;   // upper-left  (primary)
+                s1 = s1 > 0 ? s1 * s1 * 360 : 0;
 
-                // Secondary lobe catches opposite-facing slopes (ring other edge)
-                var s2 = -dhx * 0.38 + dhy * 0.30;
-                s2 = s2 > 0 ? s2 * s2 * 150 : 0;
+                var s2 = -dhx * 0.62 - dhy * 0.72;  // upper-right
+                s2 = s2 > 0 ? s2 * s2 * 280 : 0;
 
-                // Background is near-black; ALL brightness comes from specular only
-                var b = Math.min(255, 8 + s1 + s2);
+                var s3 = -dhx * 0.40 + dhy * 0.32;  // lower-right (fill)
+                s3 = s3 > 0 ? s3 * s3 * 130 : 0;
+
+                var s4 = dhx * 0.40 + dhy * 0.32;   // lower-left  (fill)
+                s4 = s4 > 0 ? s4 * s4 * 90 : 0;
+
+                // Near-black base; all brightness from specular
+                var b = Math.min(255, 8 + s1 + s2 + s3 + s4);
                 var p = i * 4;
-                // Deep blue-black tint on water; pure specular becomes blue-white
-                d[p]   = b * 0.78 | 0;
-                d[p+1] = b * 0.87 | 0;
+                d[p]   = b * 0.80 | 0;
+                d[p+1] = b * 0.90 | 0;
                 d[p+2] = b        | 0;
             }
         }
