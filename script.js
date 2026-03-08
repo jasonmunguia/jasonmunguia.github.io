@@ -256,7 +256,7 @@
         cursor.className = 'typewriter-cursor';
         el.appendChild(cursor);
         let i = 0;
-        const speed = 28; // ms per character
+        const speed = 18; // ms per character (35% faster)
 
         function tick() {
             if (i < text.length) {
@@ -289,25 +289,26 @@
 
     function addScrollButton(page) {
         var content = page.querySelector('.page-content');
-        if (!content || page.querySelector('.page-scroll-btn')) return;
+        if (!content || page.querySelector('.page-scroll-footer')) return;
+
+        // Dedicated footer strip — always visible below the text area
+        var footer = document.createElement('div');
+        footer.className = 'page-scroll-footer';
 
         var btn = document.createElement('button');
         btn.className = 'page-scroll-btn';
         btn.setAttribute('aria-label', 'Scroll down');
 
-        var svgDown = '<svg width="22" height="13" viewBox="0 0 22 13" fill="none" xmlns="http://www.w3.org/2000/svg"><polyline points="2,2 11,11 20,2" stroke="#2c1a0e" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-        var svgUp   = '<svg width="22" height="13" viewBox="0 0 22 13" fill="none" xmlns="http://www.w3.org/2000/svg"><polyline points="2,11 11,2 20,11" stroke="#2c1a0e" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+        var svgDown = '<svg width="22" height="13" viewBox="0 0 22 13" fill="none" xmlns="http://www.w3.org/2000/svg"><polyline points="2,2 11,11 20,2" stroke="#c8880a" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+        var svgUp   = '<svg width="22" height="13" viewBox="0 0 22 13" fill="none" xmlns="http://www.w3.org/2000/svg"><polyline points="2,11 11,2 20,11" stroke="#c8880a" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
         btn.innerHTML = svgDown;
-        page.appendChild(btn);
+        footer.appendChild(btn);
+        page.appendChild(footer);
 
         var atBottom = false;
 
         function updateBtn() {
-            var canScroll = content.scrollHeight > content.clientHeight + 2;
-            btn.style.opacity = canScroll ? '1' : '0';
-            btn.style.pointerEvents = canScroll ? '' : 'none';
-            if (!canScroll) return;
             atBottom = content.scrollTop + content.clientHeight >= content.scrollHeight - 4;
             btn.innerHTML = atBottom ? svgUp : svgDown;
             btn.setAttribute('aria-label', atBottom ? 'Scroll to top' : 'Scroll down');
@@ -323,9 +324,6 @@
 
         content.addEventListener('scroll', updateBtn);
         content._updateScrollBtn = updateBtn;
-        // Initial state — hidden until text overflows
-        btn.style.opacity = '0';
-        btn.style.pointerEvents = 'none';
     }
 
     // Add scroll button to every page on init
@@ -339,6 +337,17 @@
         }
     }
 
+    // Close helper — clears inline pointerEvents that linger from flip animations
+    // (without this, the overlay layer keeps eating taps even after it's hidden)
+    function closeOverlay() {
+        overlay.classList.remove('open');
+        pages.forEach(function (p) {
+            p.style.pointerEvents = '';
+            p.style.opacity = '';
+        });
+        flipping = false;
+    }
+
     // Open overlay
     openBtn.addEventListener('click', function (e) {
         e.preventDefault();
@@ -347,19 +356,17 @@
     });
 
     // Close overlay
-    closeBtn.addEventListener('click', function () {
-        overlay.classList.remove('open');
-    });
+    closeBtn.addEventListener('click', closeOverlay);
 
     // Click outside the book to close
     overlay.addEventListener('click', function (e) {
-        if (e.target === overlay) overlay.classList.remove('open');
+        if (e.target === overlay) closeOverlay();
     });
 
     // Escape key to close
     document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape' && overlay.classList.contains('open')) {
-            overlay.classList.remove('open');
+            closeOverlay();
         }
     });
 
