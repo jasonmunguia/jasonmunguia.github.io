@@ -256,7 +256,7 @@
         const cursor = document.createElement('span');
         cursor.className = 'typewriter-cursor';
         el.appendChild(cursor);
-        const speed = 2.25; // ms per character
+        const speed = 3.25; // ms per character
 
         // Parse links once upfront
         var links = {};

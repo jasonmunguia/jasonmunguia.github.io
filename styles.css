@@ -191,15 +191,14 @@ main {
     pointer-events: none;
 }
 
-/* Vignette: darkens sides/top only — no bottom gradient to avoid seam */
-.hero-section::after {
-    content: '';
-    position: absolute;
+/* hero-section::after removed — vignette is now handled by #page-vignette (fixed, full-page) */
+
+/* Fixed full-page vignette: uniform edge darkening across all sections, no seam */
+#page-vignette {
+    position: fixed;
     inset: 0;
-    background:
-        /* Very light edge vignette — barely perceptible, lets canvas breathe */
-        radial-gradient(ellipse 80% 60% at 50% 38%, transparent 40%, rgba(0,0,0,0.18) 100%);
-    z-index: 1;
+    background: radial-gradient(ellipse 80% 60% at 50% 38%, transparent 40%, rgba(0,0,0,0.18) 100%);
+    z-index: 0;
     pointer-events: none;
 }
 
