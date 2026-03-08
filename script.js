@@ -256,7 +256,7 @@
         const cursor = document.createElement('span');
         cursor.className = 'typewriter-cursor';
         el.appendChild(cursor);
-        const speed = 18; // ms per character
+        const speed = 10; // ms per character
 
         // Parse links once upfront
         var links = {};
@@ -315,7 +315,7 @@
                 if (el._updateScrollBtn) el._updateScrollBtn();
             }
         }
-        typewriterTimer = setTimeout(tick, 120); // slight delay after flip
+        typewriterTimer = setTimeout(tick, 66); // slight delay after flip
     }
 
     // Golden scroll arrow — added once per page, persists across re-visits
