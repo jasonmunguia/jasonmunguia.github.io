@@ -247,7 +247,8 @@
     let flipping = false;
     let typewriterTimer = null;
 
-    // Typewriter effect
+    // Typewriter effect — builds link <a> elements mid-typing so they're
+    // tappable on mobile the moment the word appears, not after typing finishes.
     function typewrite(el) {
         if (typewriterTimer) clearTimeout(typewriterTimer);
         const text = el.dataset.text || '';
@@ -255,29 +256,62 @@
         const cursor = document.createElement('span');
         cursor.className = 'typewriter-cursor';
         el.appendChild(cursor);
-        let i = 0;
-        const speed = 18; // ms per character (35% faster)
+        const speed = 18; // ms per character
+
+        // Parse links once upfront
+        var links = {};
+        try { links = JSON.parse(el.dataset.links || '{}'); } catch (e) {}
+
+        // Split text into segments: [{str, url}]
+        // Plain text has url=null; link words have url set.
+        var segs = [{ str: text, url: null }];
+        Object.keys(links).forEach(function (word) {
+            var next = [];
+            segs.forEach(function (seg) {
+                if (seg.url !== null) { next.push(seg); return; }
+                var parts = seg.str.split(word);
+                parts.forEach(function (part, idx) {
+                    if (part.length) next.push({ str: part, url: null });
+                    if (idx < parts.length - 1) next.push({ str: word, url: links[word] });
+                });
+            });
+            segs = next;
+        });
+
+        // Flatten to per-character list with link metadata
+        var chars = [];
+        segs.forEach(function (seg) {
+            var arr = Array.from(seg.str);
+            arr.forEach(function (c, idx) {
+                chars.push({ c: c, url: seg.url, first: idx === 0, last: idx === arr.length - 1 });
+            });
+        });
+
+        var i = 0;
+        var currentLink = null;
 
         function tick() {
-            if (i < text.length) {
-                cursor.insertAdjacentText('beforebegin', text[i]);
+            if (i < chars.length) {
+                var ch = chars[i];
+                if (ch.url) {
+                    if (ch.first) {
+                        // Create the anchor element on the first character of the word
+                        currentLink = document.createElement('a');
+                        currentLink.href = ch.url;
+                        currentLink.target = '_blank';
+                        currentLink.rel = 'noopener noreferrer';
+                        currentLink.className = 'page-link';
+                        el.insertBefore(currentLink, cursor);
+                    }
+                    currentLink.textContent += ch.c;
+                    if (ch.last) currentLink = null;
+                } else {
+                    currentLink = null;
+                    cursor.insertAdjacentText('beforebegin', ch.c);
+                }
                 i++;
                 typewriterTimer = setTimeout(tick, speed);
             } else {
-                // After typing completes, apply any embedded hyperlinks
-                const linksJson = el.dataset.links;
-                if (linksJson) {
-                    try {
-                        const links = JSON.parse(linksJson);
-                        cursor.remove();
-                        let html = el.textContent;
-                        Object.keys(links).forEach(function (word) {
-                            html = html.replace(word, '<a href="' + links[word] + '" target="_blank" rel="noopener noreferrer" class="page-link">' + word + '</a>');
-                        });
-                        el.innerHTML = html;
-                    } catch (e) { /* malformed JSON — leave as-is */ }
-                }
-                // Notify scroll button that content is fully typed
                 if (el._updateScrollBtn) el._updateScrollBtn();
             }
         }
