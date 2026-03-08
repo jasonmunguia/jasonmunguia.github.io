@@ -181,7 +181,11 @@
         ctx.drawImage(off, 0, 0, W, H);
     }
 
+    var paused = false;
+    window._waterPause = function (on) { paused = on; if (!on) requestAnimationFrame(frame); };
+
     function frame() {
+        if (paused) return;
         if (!imgData) { requestAnimationFrame(frame); return; }
         step();
         render();
@@ -326,7 +330,7 @@
                 if (el._updateScrollBtn) el._updateScrollBtn();
             }
         }
-        typewriterTimer = setTimeout(tick, 66); // slight delay after flip
+        typewriterTimer = setTimeout(tick, 30); // slight delay after flip
     }
 
     // Golden scroll arrow — added once per page, persists across re-visits
@@ -386,6 +390,7 @@
     // (without this, the overlay layer keeps eating taps even after it's hidden)
     function closeOverlay() {
         overlay.classList.remove('open');
+        if (window._waterPause) window._waterPause(false);
         pages.forEach(function (p) {
             p.style.pointerEvents = '';
             p.style.opacity = '';
@@ -397,6 +402,7 @@
     openBtn.addEventListener('click', function (e) {
         e.preventDefault();
         overlay.classList.add('open');
+        if (window._waterPause) window._waterPause(true);
         resetToPage(0);
     });
 
