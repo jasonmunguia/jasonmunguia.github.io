@@ -20,14 +20,19 @@
     // Mouse state — track velocity so we only splash on movement
     var mx = -1, my = -1, pmx = -1, pmy = -1;
 
+    // Cap canvas to safe limits — prevents OOM crash on mobile when zooming
+    var MAX_W = 1920, MAX_H = 1200;
+
     function resize() {
-        W  = canvas.width  = window.innerWidth;
-        H  = canvas.height = window.innerHeight;
+        W  = canvas.width  = Math.min(window.innerWidth,  MAX_W);
+        H  = canvas.height = Math.min(window.innerHeight, MAX_H);
         SW = Math.ceil(W / RES);
         SH = Math.ceil(H / RES);
         if (SW < 2 || SH < 2) return;
-        A = new Float32Array(SW * SH);
-        B = new Float32Array(SW * SH);
+        try {
+            A = new Float32Array(SW * SH);
+            B = new Float32Array(SW * SH);
+        } catch (e) { return; }
         off.width  = SW;
         off.height = SH;
         imgData = offCtx.createImageData(SW, SH);
@@ -39,7 +44,13 @@
             splash((seeds[si] * SW) | 0, (seeds[si+1] * SH) | 0, 2.8);
         }
     }
-    window.addEventListener('resize', resize);
+
+    // Debounce resize — prevents rapid reallocation thrashing during zoom
+    var resizeTimer;
+    window.addEventListener('resize', function () {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(resize, 150);
+    });
     requestAnimationFrame(resize);
 
     function onPointer(cx, cy) {
