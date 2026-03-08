@@ -717,7 +717,7 @@ main {
 .explore-book {
     position: relative;
     width: 400px;
-    height: 820px;
+    height: 500px;
     perspective: 1200px;
 }
 
@@ -839,17 +839,57 @@ main {
     display: block;
 }
 
-/* Content area — remaining space */
+/* Content area — scrollable, hidden scrollbar */
 .page-content {
     flex: 1;
     margin: 12px 16px 16px;
     border-radius: 10px;
     padding: 12px;
+    padding-bottom: 50px; /* room for the scroll arrow button */
     font-family: var(--font-body);
     font-size: 0.9rem;
     color: #2c1a0e;
     line-height: 1.6;
     overflow-y: auto;
+    /* hide scrollbar — navigation via golden arrow button */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.page-content::-webkit-scrollbar {
+    display: none;
+}
+
+/* Golden scroll arrow — absolutely positioned over bottom of content area */
+.page-scroll-btn {
+    position: absolute;
+    bottom: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(160deg, #f5c842 0%, #c8880a 100%);
+    border: none;
+    border-radius: 20px;
+    padding: 7px 22px;
+    min-width: 80px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    box-shadow:
+        0 3px 10px rgba(0,0,0,0.28),
+        inset 0 1px 0 rgba(255,255,255,0.35);
+    transition: transform 0.18s, box-shadow 0.18s, opacity 0.2s;
+    touch-action: manipulation;
+}
+
+.page-scroll-btn:hover {
+    transform: translateX(-50%) translateY(-2px);
+    box-shadow: 0 5px 14px rgba(0,0,0,0.30), inset 0 1px 0 rgba(255,255,255,0.35);
+}
+
+.page-scroll-btn:active {
+    transform: translateX(-50%) translateY(0);
 }
 
 /* Hyperlinks inside book pages */
@@ -1576,7 +1616,7 @@ main {
     /* Book page area fills cover width, height proportional */
     .explore-book {
         width: 100%;
-        height: clamp(600px, 200vw, 820px);
+        height: clamp(440px, 100vw, 500px);
     }
 
     /* Arrows float on the left/right edges of the wrapper */

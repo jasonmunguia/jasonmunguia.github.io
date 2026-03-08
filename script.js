@@ -277,14 +277,66 @@
                         el.innerHTML = html;
                     } catch (e) { /* malformed JSON — leave as-is */ }
                 }
+                // Notify scroll button that content is fully typed
+                if (el._updateScrollBtn) el._updateScrollBtn();
             }
         }
         typewriterTimer = setTimeout(tick, 120); // slight delay after flip
     }
 
+    // Golden scroll arrow — added once per page, persists across re-visits
+    const SCROLL_STEP = Math.round(0.9 * 1.6 * 16 * 3); // 3 lines ≈ 69px
+
+    function addScrollButton(page) {
+        var content = page.querySelector('.page-content');
+        if (!content || page.querySelector('.page-scroll-btn')) return;
+
+        var btn = document.createElement('button');
+        btn.className = 'page-scroll-btn';
+        btn.setAttribute('aria-label', 'Scroll down');
+
+        var svgDown = '<svg width="22" height="13" viewBox="0 0 22 13" fill="none" xmlns="http://www.w3.org/2000/svg"><polyline points="2,2 11,11 20,2" stroke="#2c1a0e" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+        var svgUp   = '<svg width="22" height="13" viewBox="0 0 22 13" fill="none" xmlns="http://www.w3.org/2000/svg"><polyline points="2,11 11,2 20,11" stroke="#2c1a0e" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+        btn.innerHTML = svgDown;
+        page.appendChild(btn);
+
+        var atBottom = false;
+
+        function updateBtn() {
+            var canScroll = content.scrollHeight > content.clientHeight + 2;
+            btn.style.opacity = canScroll ? '1' : '0';
+            btn.style.pointerEvents = canScroll ? '' : 'none';
+            if (!canScroll) return;
+            atBottom = content.scrollTop + content.clientHeight >= content.scrollHeight - 4;
+            btn.innerHTML = atBottom ? svgUp : svgDown;
+            btn.setAttribute('aria-label', atBottom ? 'Scroll to top' : 'Scroll down');
+        }
+
+        btn.addEventListener('click', function () {
+            if (atBottom) {
+                content.scrollTo({ top: 0, behavior: 'smooth' });
+            } else {
+                content.scrollBy({ top: SCROLL_STEP, behavior: 'smooth' });
+            }
+        });
+
+        content.addEventListener('scroll', updateBtn);
+        content._updateScrollBtn = updateBtn;
+        // Initial state — hidden until text overflows
+        btn.style.opacity = '0';
+        btn.style.pointerEvents = 'none';
+    }
+
+    // Add scroll button to every page on init
+    pages.forEach(function (page) { addScrollButton(page); });
+
     function startTypewriterForPage(index) {
         const content = pages[index].querySelector('.page-content');
-        if (content) typewrite(content);
+        if (content) {
+            content.scrollTop = 0; // reset scroll to top on each page visit
+            typewrite(content);
+        }
     }
 
     // Open overlay
@@ -364,6 +416,8 @@
             p.classList.remove('active', 'flip-out-fwd', 'flip-in-fwd', 'flip-out-back', 'flip-in-back');
             p.style.opacity = '';
             p.style.pointerEvents = '';
+            var c = p.querySelector('.page-content');
+            if (c) c.scrollTop = 0;
         });
         pages[index].classList.add('active');
         current = index;
