@@ -216,37 +216,18 @@ main {
 
 .hero-title {
     font-family: var(--font-heading);
-    font-size: clamp(3rem, 8vw, 8rem);
+    font-size: clamp(3.6rem, 9.6vw, 9.6rem);
     letter-spacing: -0.04em;
     line-height: 1.1;
     margin-bottom: var(--spacing-md);
-    text-transform: uppercase;
-
-    /* 3D convex glass — bright top highlight fades to dark edge */
-    background: linear-gradient(
-        to bottom,
-        #ffffff 0%,
-        #f0f0f0 10%,
-        #d0d0d0 28%,
-        #909090 55%,
-        #aaaaaa 75%,
-        #666666 100%
-    );
-    background-size: 100% 100%;
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    /* Deep convex glass extrusion: bright specular top-left + 6-layer depth stack */
-    filter:
-        drop-shadow(-2px -2px 0px rgba(255,255,255,0.90))
-        drop-shadow(0px -3px 4px rgba(255,255,255,0.40))
-        drop-shadow(1px 1px 0px rgba(0,0,0,1))
-        drop-shadow(2px 2px 0px rgba(0,0,0,1))
-        drop-shadow(3px 3px 0px rgba(0,0,0,0.95))
-        drop-shadow(4px 4px 0px rgba(0,0,0,0.90))
-        drop-shadow(5px 5px 0px rgba(0,0,0,0.80))
-        drop-shadow(6px 6px 14px rgba(0,0,0,0.70))
-        drop-shadow(0 0 50px rgba(160,210,255,0.20));
+    font-weight: 900;
+    color: rgba(220, 230, 255, 0.92);
+    text-shadow:
+        0 1px 0 rgba(255,255,255,0.9),
+        0 2px 0 rgba(255,255,255,0.6),
+        0 4px 6px rgba(0,0,0,0.6),
+        0 8px 20px rgba(100,150,255,0.35),
+        0 -1px 4px rgba(255,255,255,0.4);
 }
 
 .cta-group {
@@ -256,79 +237,51 @@ main {
 }
 
 .btn-glass {
-    padding: 1rem 2.75rem;
+    padding: 1.2rem 3.3rem;
     font-family: var(--font-body);
-    font-weight: 500;
-    font-size: 1.1875rem;
-    border-radius: 50px;
+    font-weight: 700;
+    font-size: 1.425rem;
+    letter-spacing: 0.08em;
+    border-radius: 999px;
     cursor: pointer;
     transition: all 0.3s var(--ease-out-expo);
-
-    /* Convex dome: strong bright highlight at top-center, deep glass body */
-    background:
-        radial-gradient(ellipse 90% 65% at 50% -5%, rgba(255,255,255,0.80) 0%, rgba(255,255,255,0.25) 45%, transparent 75%),
-        rgba(255,255,255,0.07);
-    color: transparent;
-    border: 1px solid rgba(255,255,255,0.42);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
-    /* 3D tilt: steeper angle so top face is more visible */
-    transform: perspective(350px) rotateX(12deg);
+    background: linear-gradient(
+        145deg,
+        rgba(255,255,255,0.22) 0%,
+        rgba(180,200,255,0.10) 50%,
+        rgba(255,255,255,0.05) 100%
+    );
+    color: rgba(230, 235, 255, 0.95);
+    border: 1.5px solid rgba(255,255,255,0.45);
+    border-bottom-color: rgba(255,255,255,0.15);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
     box-shadow:
-        inset 0 3px 0 rgba(255,255,255,0.88),
-        inset 0 -4px 8px rgba(0,0,0,0.55),
-        inset 0 10px 28px rgba(255,255,255,0.14),
-        inset 1px 0 0 rgba(255,255,255,0.28),
-        inset -1px 0 0 rgba(255,255,255,0.28),
-        0 12px 0 rgba(0,0,0,0.70),
-        0 14px 0 rgba(0,0,0,0.50),
-        0 16px 6px rgba(0,0,0,0.40),
-        0 24px 60px rgba(0,0,0,0.75);
+        inset 0 1.5px 0 rgba(255,255,255,0.55),
+        inset 0 -1px 0 rgba(0,0,0,0.3),
+        0 8px 24px rgba(0,0,0,0.5),
+        0 2px 8px rgba(120,160,255,0.2);
 }
 
 .btn-glass:hover {
-    background:
-        radial-gradient(ellipse 75% 55% at 50% -8%, rgba(255,255,255,0.70) 0%, rgba(255,255,255,0.14) 55%, transparent 78%),
-        rgba(255,255,255,0.11);
-    border-color: rgba(255,255,255,0.62);
-    transform: perspective(400px) rotateX(2deg);
+    background: linear-gradient(
+        145deg,
+        rgba(255,255,255,0.30) 0%,
+        rgba(180,200,255,0.15) 50%,
+        rgba(255,255,255,0.08) 100%
+    );
+    border-color: rgba(255,255,255,0.60);
+    border-bottom-color: rgba(255,255,255,0.20);
     box-shadow:
-        inset 0 2px 0 rgba(255,255,255,0.78),
-        inset 0 -2px 4px rgba(0,0,0,0.32),
-        inset 0 6px 18px rgba(255,255,255,0.12),
-        inset 1px 0 0 rgba(255,255,255,0.20),
-        inset -1px 0 0 rgba(255,255,255,0.20),
-        0 11px 0 rgba(0,0,0,0.55),
-        0 13px 4px rgba(0,0,0,0.30),
-        0 20px 56px rgba(0,0,0,0.62);
+        inset 0 1.5px 0 rgba(255,255,255,0.65),
+        inset 0 -1px 0 rgba(0,0,0,0.2),
+        0 12px 32px rgba(0,0,0,0.55),
+        0 4px 12px rgba(120,160,255,0.3);
 }
 
-/* Button convex glass text */
+/* Button text — inherits color from parent */
 .btn-text {
-    background: linear-gradient(
-        to bottom,
-        #ffffff 0%,
-        #f0f0f0 10%,
-        #d0d0d0 28%,
-        #909090 55%,
-        #aaaaaa 75%,
-        #666666 100%
-    );
-    background-size: 100% 100%;
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
     display: inline-block;
-    filter:
-        drop-shadow(-2px -2px 0px rgba(255,255,255,0.90))
-        drop-shadow(0px -3px 4px rgba(255,255,255,0.40))
-        drop-shadow(1px 1px 0px rgba(0,0,0,1))
-        drop-shadow(2px 2px 0px rgba(0,0,0,1))
-        drop-shadow(3px 3px 0px rgba(0,0,0,0.95))
-        drop-shadow(4px 4px 0px rgba(0,0,0,0.90))
-        drop-shadow(5px 5px 0px rgba(0,0,0,0.80))
-        drop-shadow(6px 6px 14px rgba(0,0,0,0.70))
-        drop-shadow(0 0 50px rgba(160,210,255,0.20));
 }
 
 /* Gift button */
@@ -336,48 +289,49 @@ main {
     display: flex;
     align-items: center;
     gap: 0.55rem;
-    padding: 0.6rem 1.6rem;
+    padding: 0.72rem 1.92rem;
     margin-bottom: 1.5rem;
     font-family: var(--font-body);
-    font-size: 0.95rem;
-    font-weight: 500;
-    letter-spacing: 0.03em;
-    border-radius: 50px;
+    font-size: 1.14rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    border-radius: 999px;
     cursor: pointer;
-    /* Same convex dome as btn-glass, scaled for smaller button */
-    background:
-        radial-gradient(ellipse 90% 65% at 50% -5%, rgba(255,255,255,0.75) 0%, rgba(255,255,255,0.20) 45%, transparent 75%),
-        rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.34);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    background: linear-gradient(
+        145deg,
+        rgba(255,255,255,0.22) 0%,
+        rgba(180,200,255,0.10) 50%,
+        rgba(255,255,255,0.05) 100%
+    );
+    color: rgba(230, 235, 255, 0.95);
+    border: 1.5px solid rgba(255,255,255,0.45);
+    border-bottom-color: rgba(255,255,255,0.15);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
     box-shadow:
-        inset 0 3px 0 rgba(255,255,255,0.85),
-        inset 0 -3px 7px rgba(0,0,0,0.50),
-        inset 0 8px 20px rgba(255,255,255,0.12),
-        0 10px 0 rgba(0,0,0,0.65),
-        0 12px 0 rgba(0,0,0,0.45),
-        0 14px 5px rgba(0,0,0,0.38),
-        0 20px 45px rgba(0,0,0,0.70);
-    transform: perspective(350px) rotateX(12deg);
+        inset 0 1.5px 0 rgba(255,255,255,0.55),
+        inset 0 -1px 0 rgba(0,0,0,0.3),
+        0 8px 24px rgba(0,0,0,0.5),
+        0 2px 8px rgba(120,160,255,0.2);
     transition: all 0.3s var(--ease-out-expo);
     opacity: 0;
     animation: buttonEntrance 1.4s cubic-bezier(0.22, 1, 0.36, 1) 0.4s forwards;
 }
 
 .btn-gift:hover {
-    background:
-        radial-gradient(ellipse 75% 55% at 50% -8%, rgba(255,255,255,0.68) 0%, rgba(255,255,255,0.12) 55%, transparent 78%),
-        rgba(255,255,255,0.10);
-    border-color: rgba(255,255,255,0.58);
+    background: linear-gradient(
+        145deg,
+        rgba(255,255,255,0.30) 0%,
+        rgba(180,200,255,0.15) 50%,
+        rgba(255,255,255,0.08) 100%
+    );
+    border-color: rgba(255,255,255,0.60);
+    border-bottom-color: rgba(255,255,255,0.20);
     box-shadow:
-        inset 0 2px 0 rgba(255,255,255,0.72),
-        inset 0 -2px 4px rgba(0,0,0,0.28),
-        inset 0 5px 14px rgba(255,255,255,0.10),
-        0 9px 0 rgba(0,0,0,0.52),
-        0 11px 3px rgba(0,0,0,0.28),
-        0 16px 40px rgba(0,0,0,0.58);
-    transform: perspective(400px) rotateX(2deg);
+        inset 0 1.5px 0 rgba(255,255,255,0.65),
+        inset 0 -1px 0 rgba(0,0,0,0.2),
+        0 12px 32px rgba(0,0,0,0.55),
+        0 4px 12px rgba(120,160,255,0.3);
     translate: 0 -3px;
 }
 
@@ -391,27 +345,7 @@ main {
 }
 
 .gift-label {
-    background: linear-gradient(
-        to bottom,
-        #ffffff 0%,
-        #f0f0f0 10%,
-        #d0d0d0 28%,
-        #909090 55%,
-        #aaaaaa 75%,
-        #666666 100%
-    );
-    background-size: 100% 100%;
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
     display: inline-block;
-    filter:
-        drop-shadow(-1px -1px 0px rgba(255,255,255,0.90))
-        drop-shadow(0px -2px 3px rgba(255,255,255,0.35))
-        drop-shadow(1px 1px 0px rgba(0,0,0,1))
-        drop-shadow(2px 2px 0px rgba(0,0,0,1))
-        drop-shadow(3px 3px 0px rgba(0,0,0,0.90))
-        drop-shadow(4px 4px 8px rgba(0,0,0,0.65));
 }
 
 .gift-status {
@@ -499,16 +433,12 @@ main {
    ========================================================================== */
 .hero-title {
     opacity: 0;
-    /* Fade in quickly, then shimmer — typewriter JS fills the text */
-    animation:
-        heroFadeIn 0.35s ease forwards,
-        goldShimmer 5s linear 0.8s infinite;
-    animation-delay: 0.1s, 0s;
+    animation: heroFadeIn 0.35s ease 0.1s forwards;
 }
 
 @keyframes heroFadeIn {
     from { opacity: 0; }
-    to   { opacity: 0.35; }
+    to   { opacity: 1; }
 }
 
 .btn-glass {
@@ -529,14 +459,6 @@ main {
     animation-delay: 0.5s, 1.9s;
 }
 
-/* Staggered candle sweep per button text */
-.cta-group .btn-glass:nth-child(1) .btn-text {
-    animation: goldShimmer 4.5s linear 1.9s infinite;
-}
-
-.cta-group .btn-glass:nth-child(2) .btn-text {
-    animation: goldShimmer 4.5s linear 3.2s infinite;
-}
 
 /* Hover lift — perspective tilt is handled directly in .btn-glass:hover above */
 .btn-glass:hover {
