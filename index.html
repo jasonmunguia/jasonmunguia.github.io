@@ -374,6 +374,36 @@ But what keeps me going isn&apos;t just the business. These glasses don&apos;t j
     </div>
 
     <script src="script.js"></script>
+
+    <svg style="position:absolute;width:0;height:0;overflow:hidden">
+      <defs>
+        <filter id="glass-distortion" x="-10%" y="-10%"
+                width="120%" height="120%"
+                filterUnits="objectBoundingBox">
+          <feTurbulence type="fractalNoise"
+                        baseFrequency="0.012 0.008"
+                        numOctaves="3" seed="5" result="noise"/>
+          <feDisplacementMap in="SourceGraphic" in2="noise"
+                             scale="8"
+                             xChannelSelector="R"
+                             yChannelSelector="G"/>
+        </filter>
+        <filter id="glass-specular" x="-10%" y="-30%"
+                width="120%" height="160%"
+                color-interpolation-filters="sRGB">
+          <feGaussianBlur in="SourceAlpha" stdDeviation="4" result="blur"/>
+          <feSpecularLighting in="blur" surfaceScale="8"
+                              specularConstant="1.4"
+                              specularExponent="60"
+                              lighting-color="white" result="spec">
+            <fePointLight x="50%" y="-100" z="200"/>
+          </feSpecularLighting>
+          <feComposite in="spec" in2="SourceAlpha"
+                       operator="in" result="specClipped"/>
+          <feBlend in="SourceGraphic" in2="specClipped" mode="screen"/>
+        </filter>
+      </defs>
+    </svg>
 </body>
 
 </html>
